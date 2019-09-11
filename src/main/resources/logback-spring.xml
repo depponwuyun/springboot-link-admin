@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<!-- 文件输出格式 -->
+	<property name="PATTERN"
+		value="%-12(%d{yyyy-MM-dd HH:mm:ss.SSS}) |-%-5level [%thread] %c [%L] -| %msg%n" />
+	<!-- dev文件路径 -->
+	<property name="DEV_FILE_PATH" value="c:/opt/logs/log" />
+	<!-- test文件路径 -->
+	<property name="TEST_FILE_PATH" value="c:/opt/logs/log" />
+	<!-- pro文件路径 -->
+	<property name="PRO_FILE_PATH" value="c:/opt/logs/log" />
+	<!-- SpringBoot 的 Logging 配置的级别有7个：日志级别从低到高分为：TRACE < DEBUG < INFO < WARN 
+		< ERROR < FATAL -->
+	<!-- 开发环境 -->
+	<springProfile name="dev">
+		<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder>
+				<pattern>${PATTERN}</pattern>
+			</encoder>
+		</appender>
+
+		<!--JdbcTemplate的日志输出器 -->
+		<logger name="org.springframework.jdbc.core.JdbcTemplate"
+			additivity="true">
+			<level value="DEBUG" />
+		</logger>
+
+		<root level="INFO">
+			<appender-ref ref="CONSOLE" />
+		</root>
+	</springProfile>
+	<!-- 测试环境 -->
+	<springProfile name="test">
+		<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder>
+				<pattern>${PATTERN}</pattern>
+			</encoder>
+		</appender>
+		<!-- 每天产生一个文件 -->
+		<appender name="TEST-FILE"
+			class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<!-- 文件路径 -->
+			<file>${TEST_FILE_PATH}.log</file>
+			<rollingPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<FileNamePattern>${PRO_FILE_PATH}.%d{yyyy-MM-dd}-%i.log
+				</FileNamePattern>
+				<MaxHistory>100</MaxHistory>
+				<!--用来指定日志文件的上限大小，那么到了这个值，就会删除旧的日志 -->
+				<totalSizeCap>1GB</totalSizeCap>
+				<MaxFileSize>10MB</MaxFileSize>
+			</rollingPolicy>
+			<encoder>
+				<charset>UTF-8</charset>
+				<pattern>${PATTERN}</pattern>
+			</encoder>
+		</appender>
+
+		<!--JdbcTemplate的日志输出器 -->
+		<logger name="org.springframework.jdbc.core.JdbcTemplate"
+			additivity="true">
+			<level value="DEBUG" />
+		</logger>
+
+		<root level="INFO">
+			<appender-ref ref="CONSOLE" />
+			<appender-ref ref="TEST-FILE" />
+		</root>
+
+	</springProfile>
+	<!-- 生产环境 -->
+	<springProfile name="prod">
+		<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder>
+				<pattern>${PATTERN}</pattern>
+			</encoder>
+		</appender>
+		<appender name="PROD_FILE"
+			class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${PRO_FILE_PATH}.log</file>
+			<rollingPolicy
+				class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+				<FileNamePattern>${PRO_FILE_PATH}.%d{yyyy-MM-dd}-%i.log
+				</FileNamePattern>
+				<MaxHistory>100</MaxHistory>
+				<!--用来指定日志文件的上限大小，那么到了这个值，就会删除旧的日志 -->
+				<totalSizeCap>1GB</totalSizeCap>
+				<MaxFileSize>10MB</MaxFileSize>
+			</rollingPolicy>
+			<encoder>
+				<charset>UTF-8</charset>
+				<pattern>${PATTERN}</pattern>
+			</encoder>
+
+		</appender>
+		<!--JdbcTemplate的日志输出器 -->
+		<logger name="org.springframework.jdbc.core.JdbcTemplate"
+			additivity="true">
+			<level value="DEBUG" />
+		</logger>
+		<root level="INFO">
+			<appender-ref ref="CONSOLE" />
+			<appender-ref ref="PROD_FILE" />
+		</root>
+	</springProfile>
+</configuration>
