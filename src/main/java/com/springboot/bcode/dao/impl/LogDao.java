@@ -17,8 +17,8 @@ public class LogDao extends BaseDaoImpl implements ILogDao {
 
 	@Override
 	public JqGridPage<BLog> selectPage(BLog log) {
-		int startResult = (log.getPage() - 1) * log.getRows()+ 1;;
-		int endResule = (log.getPage() * log.getRows());
+		int startResult = (log.getPage() - 1) * log.getLimit()+ 1;;
+		int endResule = (log.getPage() * log.getLimit());
 
 		StringBuilder sql = new StringBuilder();
 		StringBuilder sqlOrderBy = new StringBuilder();
@@ -57,7 +57,7 @@ public class LogDao extends BaseDaoImpl implements ILogDao {
 		List<BLog> list = super.find(newsql.toString(), null, BLog.class);
 		List<BLog> count = super.find(sql.toString(), null, BLog.class);
 		JqGridPage<BLog> page = new JqGridPage<BLog>(list, count.isEmpty() ? 0
-				: count.size(), log.getRows(), log.getPage());
+				: count.size(), log.getLimit(), log.getPage());
 		return page;
 	}
 

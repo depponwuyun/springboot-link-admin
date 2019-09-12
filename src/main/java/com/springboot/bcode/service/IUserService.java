@@ -1,9 +1,7 @@
 package com.springboot.bcode.service;
 
-
-import javax.servlet.http.HttpSession;
-
 import com.springboot.bcode.domain.auth.LoginVO;
+import com.springboot.bcode.domain.auth.ModifyPwdVO;
 import com.springboot.bcode.domain.auth.UserInfo;
 import com.springboot.bcode.domain.auth.UserRoleVO;
 import com.springboot.common.exception.AuthException;
@@ -13,17 +11,15 @@ public interface IUserService {
 
 	JqGridPage<UserInfo> queryPage(UserInfo user);
 
-	String login(LoginVO vo) ;
-	
+	String login(LoginVO vo);
+
 	UserInfo info();
 
 	UserInfo find(String uid);
 
 	UserInfo find(UserInfo user);
 
-
-	void modifyPwd(HttpSession session, String newPassword,
-			String enNewpassword, String oldPassword);
+	void modifyPwd(ModifyPwdVO vo);
 
 	boolean add(UserInfo user) throws AuthException;
 

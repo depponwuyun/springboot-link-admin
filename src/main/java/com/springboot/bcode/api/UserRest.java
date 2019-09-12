@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.bcode.domain.auth.LoginVO;
+import com.springboot.bcode.domain.auth.ModifyPwdVO;
 import com.springboot.bcode.domain.auth.UserInfo;
 import com.springboot.bcode.domain.auth.UserRoleVO;
 import com.springboot.bcode.service.ILogService;
@@ -95,16 +96,16 @@ public class UserRest extends BaseRest {
 
 	@RequestMapping(value = "list", method = RequestMethod.POST)
 	@ResponseBody
-	public JqGridPage<UserInfo> list(UserInfo user) {
-		JqGridPage<UserInfo> page = null;
+	public ResponseResult list(@RequestBody UserInfo user) {
+		ResponseResult rep = new ResponseResult();
 		try {
-			page = userService.queryPage(user);
+			rep.setResult(userService.queryPage(user));
 		} catch (AuthException e) {
 			LoggerUtil.error(e.getMessage());
 		} catch (Exception e) {
 			LoggerUtil.error(e.getMessage());
 		}
-		return page;
+		return rep;
 
 	}
 
@@ -182,15 +183,10 @@ public class UserRest extends BaseRest {
 
 	@RequestMapping(value = "modifyPwd", method = RequestMethod.POST)
 	@OpertionBLog(title = "修改密码")
-	@ResponseBody
-	public ResponseResult modifyPwd(HttpSession session,
-			@RequestParam(value = "newPassword") String newPassword,
-			@RequestParam(value = "enNewpassword") String enNewpassword,
-			@RequestParam(value = "oldPassword") String oldPassword) {
+	public ResponseResult modifyPwd(@RequestBody ModifyPwdVO vo) {
 		ResponseResult rep = new ResponseResult();
 		try {
-			userService.modifyPwd(session, newPassword, enNewpassword,
-					oldPassword);
+			userService.modifyPwd(vo);
 		} catch (AuthException e) {
 			rep.setCode(CODE_500);
 			rep.setMsg(e.getMessage());

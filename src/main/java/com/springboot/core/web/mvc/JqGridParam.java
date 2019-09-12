@@ -10,25 +10,25 @@ package com.springboot.core.web.mvc;
  *
  */
 public class JqGridParam {
-	private Integer page;// 当前页
-	private Integer rows;// 分页步长
+	private int page;// 当前页
+	private int limit;// 分页步长
 	private String sidx; // 排序 字段
 	private String sord; // asc 或 desc
 
-	public Integer getPage() {
+	public int getPage() {
 		return page;
 	}
 
-	public void setPage(Integer page) {
+	public void setPage(int page) {
 		this.page = page;
 	}
 
-	public Integer getRows() {
-		return rows;
+	public int getLimit() {
+		return limit;
 	}
 
-	public void setRows(Integer rows) {
-		this.rows = rows;
+	public void setLimit(int limit) {
+		this.limit = limit;
 	}
 
 	public String getSidx() {

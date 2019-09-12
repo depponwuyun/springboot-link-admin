@@ -6,19 +6,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.link.tool.lang.StringUtils;
 import com.link.tool.utils.MD5Utils;
-import com.springboot.bcode.dao.IDataScopeDao;
 import com.springboot.bcode.dao.IUserDao;
 import com.springboot.bcode.domain.auth.DataScope;
 import com.springboot.bcode.domain.auth.Department;
 import com.springboot.bcode.domain.auth.LoginVO;
+import com.springboot.bcode.domain.auth.ModifyPwdVO;
 import com.springboot.bcode.domain.auth.Permission;
 import com.springboot.bcode.domain.auth.Role;
 import com.springboot.bcode.domain.auth.UserInfo;
@@ -29,13 +27,11 @@ import com.springboot.bcode.service.IDepartmentService;
 import com.springboot.bcode.service.IRightService;
 import com.springboot.bcode.service.IRoleService;
 import com.springboot.bcode.service.IUserService;
-import com.springboot.common.AppContext;
 import com.springboot.common.AppToken;
 import com.springboot.common.GlobalUser;
 import com.springboot.common.exception.AuthException;
 import com.springboot.common.exception.SystemException;
 import com.springboot.core.algorithm.DepartmentRecursion;
-import com.springboot.core.algorithm.RightRecursion;
 import com.springboot.core.web.mvc.JqGridPage;
 
 @Service
@@ -122,8 +118,8 @@ public class UserService implements IUserService {
 			roleName += role.getName() + ";";
 		}
 		user.setRoleName(roleName);
-		List<Permission> ownedRightList = rightService
-				.queryOwnedRight(user.getUid());
+		List<Permission> ownedRightList = rightService.queryOwnedRight(user
+				.getUid());
 
 		if (ownedRightList == null || ownedRightList.isEmpty()) {
 			throw new SystemException("当前用户为的角色未分配权限");
@@ -153,7 +149,7 @@ public class UserService implements IUserService {
 		ownedDateScopeList = new ArrayList<DataScope>(ownedDatasocpeSet);
 
 		// 更新用户的权限
-		//ownedMenuRightList = RightRecursion.recursion(ownedMenuRightList);
+		// ownedMenuRightList = RightRecursion.recursion(ownedMenuRightList);
 		user.setMenus(ownedMenuRightList);
 		user.setPermissions(ownedFunctionList);
 		user.setOwnedDateScopeList(ownedDateScopeList);
@@ -162,31 +158,31 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public void modifyPwd(HttpSession session, String newPassword,
-			String enNewpassword, String oldPassword) {
+	public void modifyPwd(ModifyPwdVO vo) {
 
-		if (StringUtils.isBlank(newPassword)
-				|| StringUtils.isBlank(enNewpassword)
-				|| StringUtils.isBlank(oldPassword)) {
+		if (vo == null || StringUtils.isBlank(vo.getOldPassword())
+				|| StringUtils.isBlank(vo.getNewPassword())
+				|| StringUtils.isBlank(vo.getConfirmNewPassword())) {
 			throw new AuthException("必填项不能为空");
 		}
-		if (!newPassword.equals(enNewpassword)) {
+		if (!vo.getNewPassword().equals(vo.getConfirmNewPassword())) {
 			throw new AuthException("两次输入密码必须相同");
 		}
-		/*
-		 * UserInfo user = (UserInfo) session
-		 * .getAttribute(GlobalUser.USER_SESSION_KEY);
-		 * 
-		 * if (!user.getPassword().equals(MD5Utils.getMD5Encoding(oldPassword)))
-		 * { // 兼容旧数据 if (!user.getPassword().equals(oldPassword)) { throw new
-		 * AuthException("原密码错误"); } }
-		 * 
-		 * UserInfo userInfo = userDao.select(user.getUid()); if (userInfo ==
-		 * null) { throw new AuthException("用户不存在"); }
-		 * 
-		 * userInfo.setPassword(MD5Utils.getMD5Encoding(newPassword));
-		 * userDao.update(userInfo);
-		 */
+		UserInfo user = GlobalUser.getUserInfo();
+
+		if (!user.getPassword().equals(
+				MD5Utils.getMD5Encoding(vo.getOldPassword()))) {
+			throw new AuthException("原密码错误");
+		}
+
+		UserInfo userInfo = userDao.select(user.getUid());
+		if (userInfo == null) {
+			throw new AuthException("用户不存在");
+		}
+		userInfo.setPassword(MD5Utils.getMD5Encoding(vo.getNewPassword()));
+		userDao.update(userInfo);
+		//更新内存中的密码
+		GlobalUser.setUserInfo(userInfo);
 
 	}
 

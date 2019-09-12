@@ -15,43 +15,46 @@ import com.springboot.core.web.mvc.JqGridPage;
 public class RoleDao extends BaseDaoImpl implements IRoleDao {
 	@Override
 	public JqGridPage<Role> selectPage(Role role) {
-		int startResult = (role.getPage() - 1) * role.getRows()+ 1;;
-		int endResule = (role.getPage() * role.getRows());
-
+		List<Role> list = super.find(
+				getSqlPageHandle().handlerPagingSQL(rolePageSql(role, 0),
+						role.getPage(), role.getLimit()),
+				null, Role.class);
+		int count = super.jdbcTemplate.queryForObject(rolePageSql(role, 1),
+				null, Integer.class);
+		JqGridPage<Role> page = new JqGridPage<Role>(list, count,
+				role.getLimit(), role.getPage());
+		return page;
+	}
+	
+	private String rolePageSql(Role role, int type) {
 		StringBuilder sql = new StringBuilder();
-		StringBuilder sqlOrderBy = new StringBuilder();
-		sql.append("select * from t_web_role where 1=1 ");
+		if (type == 0) {
+			sql.append("select * from t_web_role");
+		} else {
+			sql.append("select count(*) from t_web_role");
+		}
+		sql.append(" where 1=1");
 
 		if (StringUtils.isNotBlank(role.getName())) {
 			sql.append(" and name like '%").append(
 					role.getName().trim() + "%' ");
 		}
-
-		if (StringUtils.isNotBlank(role.getSidx())) {
-			if ((role.getSord().trim().equalsIgnoreCase("asc"))) {
-				sqlOrderBy.append(" order by " + role.getSidx().split(" ")[0]
-						+ " asc");
+		if (type == 0) {
+			if (StringUtils.isNotBlank(role.getSidx())) {
+				if ((role.getSord().trim().equalsIgnoreCase("asc"))) {
+					sql.append(" order by " + role.getSidx().split(" ")[0]
+							+ " asc");
+				} else {
+					sql.append(" order by " + role.getSidx().split(" ")[0]
+							+ " desc");
+				}
 			} else {
-				sqlOrderBy.append(" order by " + role.getSidx().split(" ")[0]
-						+ " desc");
+				sql.append(" order by id asc");
 			}
-		} else {
-			sqlOrderBy.append(" order by id asc");
 		}
-
-		StringBuffer newsql = new StringBuffer();
-		newsql.append("select * from(select row_number() over (" + sqlOrderBy
-				+ ") rownumber,* from( ");
-		newsql.append(sql);
-		newsql.append(")a )b where rownumber between " + startResult + " and "
-				+ endResule);
-
-		List<Role> list = super.find(newsql.toString(), null, Role.class);
-		List<Role> count = super.find(sql.toString(), null, Role.class);
-		JqGridPage<Role> page = new JqGridPage<Role>(list, count.isEmpty() ? 0
-				: count.size(), role.getRows(), role.getPage());
-		return page;
+		return sql.toString();
 	}
+	
 
 	@Override
 	public List<Role> selectByUserId(String userId) {

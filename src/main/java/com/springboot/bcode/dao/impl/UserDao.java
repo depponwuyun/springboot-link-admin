@@ -21,12 +21,12 @@ public class UserDao extends BaseDaoImpl implements IUserDao {
 	public JqGridPage<UserInfo> selectPage(UserInfo user) {
 		List<UserInfo> list = super.find(
 				getSqlPageHandle().handlerPagingSQL(userPageSql(user, 0),
-						user.getPage().intValue(), user.getRows().intValue()),
+						user.getPage(), user.getLimit()),
 				null, UserInfo.class);
 		int count = super.jdbcTemplate.queryForObject(userPageSql(user, 1),
 				null, Integer.class);
 		JqGridPage<UserInfo> page = new JqGridPage<UserInfo>(list, count,
-				user.getRows(), user.getPage());
+				user.getLimit(), user.getPage());
 		return page;
 	}
 

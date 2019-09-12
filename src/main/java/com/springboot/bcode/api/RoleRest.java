@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.bcode.domain.auth.Role;
 import com.springboot.bcode.domain.auth.RoleDataScopeVO;
@@ -22,8 +23,8 @@ import com.springboot.core.web.mvc.BaseRest;
 import com.springboot.core.web.mvc.JqGridPage;
 import com.springboot.core.web.mvc.ResponseResult;
 
-@Controller
-@RequestMapping(value = "/role")
+@RestController
+@RequestMapping(value = "/rest/role")
 public class RoleRest extends BaseRest {
 
 	@Autowired
@@ -36,16 +37,16 @@ public class RoleRest extends BaseRest {
 	
 	@RequestMapping(value = "list", method = RequestMethod.POST)
 	@ResponseBody
-	public JqGridPage<Role> list(Role role) {
-		JqGridPage<Role> page = null;
+	public ResponseResult list(@RequestBody Role role) {
+		ResponseResult rep = new ResponseResult();
 		try {
-			page = roleService.queryPage(role);
+			rep.setResult( roleService.queryPage(role));
 		} catch (AuthException e) {
 			LoggerUtil.error(e.getMessage());
 		} catch (Exception e) {
 			LoggerUtil.error(e.getMessage());
 		}
-		return page;
+		return rep;
 
 	}
 

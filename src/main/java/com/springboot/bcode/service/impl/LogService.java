@@ -18,12 +18,6 @@ public class LogService implements ILogService {
 	public JqGridPage<BLog> queryPage(BLog log) {
 		if (log == null)
 			throw new AuthException("参数不能为空");
-		if (log.getPage() == null || log.getPage() < 0) {
-			log.setPage(1);
-		}
-		if (log.getRows()== null || log.getRows() < 10) {
-			log.setRows(10);
-		}
 		return logDao.selectPage(log);
 	}
 	
