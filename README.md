@@ -23,15 +23,15 @@ git clone https://github.com/252956/springboot-link-admin.git
 
 # 安装依赖
 <dependency>
-	<groupId>com.link.tool</groupId>
-	<artifactId>link-tool</artifactId>
-	<version>1.1</version>
+  <groupId>com.link.tool</groupId>
+  <artifactId>link-tool</artifactId>
+  <version>1.1</version>
 </dependency>
 		
 <dependency>
-	  <groupId>com.link.tool</groupId>
-		<artifactId>link-tool-http</artifactId>
-		<version>1.1</version>
+  <groupId>com.link.tool</groupId>
+  <artifactId>link-tool-http</artifactId>
+  <version>1.1</version>
 </dependency>
 
 # 启动服务
