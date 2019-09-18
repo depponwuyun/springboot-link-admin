@@ -58,7 +58,7 @@
 			<artifactId>spring-boot-starter-redis</artifactId>
 			<version>1.4.3.RELEASE</version>
 		</dependency>
-		
+
 		<!-- json -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
@@ -75,12 +75,6 @@
 			<artifactId>link-tool</artifactId>
 			<version>1.1</version>
 		</dependency>
-		<dependency>
-			<groupId>com.link.tool</groupId>
-			<artifactId>link-tool-http</artifactId>
-			<version>1.1</version>
-		</dependency>
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -122,19 +116,19 @@
 			<layout>default</layout>
 		</repository>
 	</repositories>
-	
-	
+
+
 	<distributionManagement>
-    <repository>
-        <id>rdc-releases</id>
-        <url>https://repo.rdc.aliyun.com/repository/105343-release-kKtRTB/</url>
-    </repository>
-    <snapshotRepository>
-        <id>rdc-snapshots</id>
-        <url>https://repo.rdc.aliyun.com/repository/105343-snapshot-sWGNp2/</url>
-    </snapshotRepository>
-</distributionManagement>
-	
+		<repository>
+			<id>rdc-releases</id>
+			<url>https://repo.rdc.aliyun.com/repository/105343-release-kKtRTB/</url>
+		</repository>
+		<snapshotRepository>
+			<id>rdc-snapshots</id>
+			<url>https://repo.rdc.aliyun.com/repository/105343-snapshot-sWGNp2/</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 
 	<build>
 		<plugins>

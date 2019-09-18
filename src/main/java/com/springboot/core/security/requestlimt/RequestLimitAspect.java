@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.link.tool.http.IPUtils;
+import com.springboot.common.utils.IPUtils;
 import com.springboot.core.redis.IRedis;
 import com.springboot.core.redis.RedisUtils;
 

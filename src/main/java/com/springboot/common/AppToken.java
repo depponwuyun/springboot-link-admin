@@ -1,9 +1,9 @@
 package com.springboot.common;
 
-import com.link.tool.http.IPUtils;
 import com.link.tool.utils.MD5Utils;
 import com.link.tool.utils.UUIDUtils;
 import com.springboot.common.utils.HttpUtils;
+import com.springboot.common.utils.IPUtils;
 
 /**
  * global only identifier

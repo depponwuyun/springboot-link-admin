@@ -17,10 +17,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.link.tool.http.IPUtils;
 import com.springboot.bcode.domain.auth.Permission;
 import com.springboot.bcode.domain.auth.UserInfo;
 import com.springboot.common.GlobalUser;
+import com.springboot.common.utils.IPUtils;
 import com.springboot.core.logger.LoggerUtil;
 
 /**
