@@ -22,6 +22,7 @@ git clone https://github.com/252956/springboot-link-admin.git
 # 导入项目
 
 # 安装依赖
+[link-tool-pom][https://github.com/252956/link-tool-pom)
 <dependency>
   <groupId>com.link.tool</groupId>
   <artifactId>link-tool</artifactId>
