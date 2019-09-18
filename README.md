@@ -17,26 +17,31 @@ springboot-link-admin 提供一个权限认证后端接口解决方案，它基�
 
 ```bash
 # 克隆项目
-git clone https://github.com/PanJiaChen/vue-element-admin.git
+git clone https://github.com/252956/springboot-link-admin.git
 
-# 进入项目目录
-cd vue-link-admin
+# 导入项目
 
 # 安装依赖
-npm install
-
-# 建议不要直接使用 cnpm 安装依赖，会有各种诡异的 bug。可以通过如下操作解决 npm 下载速度慢的问题
-npm install --registry=https://registry.npm.taobao.org
+<dependency>
+	<groupId>com.link.tool</groupId>
+	<artifactId>link-tool</artifactId>
+	<version>1.1</version>
+</dependency>
+		
+<dependency>
+	  <groupId>com.link.tool</groupId>
+		<artifactId>link-tool-http</artifactId>
+		<version>1.1</version>
+</dependency>
 
 # 启动服务
-npm start
+运行 App.java
 ```
 
 浏览器访问 http://localhost:8888/
 
-## 发布
 
 
-# 构建生产环境
-npm run build
+
+
 
