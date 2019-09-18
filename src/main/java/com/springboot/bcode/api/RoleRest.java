@@ -1,26 +1,20 @@
 package com.springboot.bcode.api;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.bcode.domain.auth.Role;
 import com.springboot.bcode.domain.auth.RoleDataScopeVO;
-import com.springboot.bcode.domain.auth.RolePermissionVO;
 import com.springboot.bcode.service.IRoleService;
 import com.springboot.common.exception.AuthException;
 import com.springboot.core.logger.LoggerUtil;
 import com.springboot.core.logger.OpertionBLog;
 import com.springboot.core.security.authorize.Requestauthorize;
 import com.springboot.core.web.mvc.BaseRest;
-import com.springboot.core.web.mvc.JqGridPage;
 import com.springboot.core.web.mvc.ResponseResult;
 
 @RestController
@@ -34,13 +28,12 @@ public class RoleRest extends BaseRest {
 	public String manager() {
 		return "auth/role_manager";
 	}
-	
+
 	@RequestMapping(value = "list", method = RequestMethod.POST)
-	@ResponseBody
 	public ResponseResult list(@RequestBody Role role) {
 		ResponseResult rep = new ResponseResult();
 		try {
-			rep.setResult( roleService.queryPage(role));
+			rep.setResult(roleService.queryPage(role));
 		} catch (AuthException e) {
 			LoggerUtil.error(e.getMessage());
 		} catch (Exception e) {
@@ -50,27 +43,18 @@ public class RoleRest extends BaseRest {
 
 	}
 
-	/**
-	 * 查询所有角色
-	 * 
-	 * @return
-	 */
-	@RequestMapping(value = "queryAll")
-	@ResponseBody
-	public ResponseResult queryAll() {
+	@RequestMapping(value = "all")
+	public ResponseResult all() {
 		ResponseResult rep = new ResponseResult();
 		try {
-			Role role = new Role();
-			List<Role> list = roleService.queryAll(role);
-			rep.setResult(list);
+			rep.setResult(roleService.queryAll());
 		} catch (AuthException e) {
-			rep.setCode(CODE_500);
-			rep.setMsg(e.getMessage());
+			LoggerUtil.error(e.getMessage());
 		} catch (Exception e) {
-			rep.setCode(CODE_500);
-			rep.setMsg("系统异常.请稍后再试");
+			LoggerUtil.error(e.getMessage());
 		}
 		return rep;
+
 	}
 
 	/**
@@ -79,10 +63,9 @@ public class RoleRest extends BaseRest {
 	 * @param role
 	 * @return
 	 */
+	@Requestauthorize
 	@OpertionBLog(title = "新增角色")
 	@RequestMapping(value = "add", method = RequestMethod.POST)
-	@ResponseBody
-	@Requestauthorize
 	public ResponseResult add(@RequestBody Role role) {
 		ResponseResult rep = new ResponseResult();
 		try {
@@ -99,20 +82,18 @@ public class RoleRest extends BaseRest {
 	}
 
 	/**
-	 * 分配角色对应的权限
+	 * 修改角色
 	 * 
-	 * @param roleRelationRightVO
+	 * @param role
 	 * @return
 	 */
-	@OpertionBLog(title = "角色分配权限")
-	@RequestMapping(value = "saveRelationRight", method = RequestMethod.POST)
-	@ResponseBody
 	@Requestauthorize
-	public ResponseResult saveRelationRight(
-			@RequestBody RolePermissionVO roleRelationRightVO) {
+	@OpertionBLog(title = "修改角色")
+	@RequestMapping(value = "update", method = RequestMethod.POST)
+	public ResponseResult update(@RequestBody Role role) {
 		ResponseResult rep = new ResponseResult();
 		try {
-			roleService.saveRelationRight(roleRelationRightVO);
+			roleService.update(role);
 		} catch (AuthException e) {
 			rep.setCode(CODE_500);
 			rep.setMsg(e.getMessage());
@@ -120,7 +101,6 @@ public class RoleRest extends BaseRest {
 			rep.setCode(CODE_500);
 			rep.setMsg("系统异常.请稍后再试");
 		}
-
 		return rep;
 	}
 
@@ -132,10 +112,8 @@ public class RoleRest extends BaseRest {
 	 */
 	@OpertionBLog(title = "角色分配数据权限")
 	@RequestMapping(value = "saveRelationDataScope", method = RequestMethod.POST)
-	@ResponseBody
 	@Requestauthorize
-	public ResponseResult saveRelationDataScope(
-			@RequestBody RoleDataScopeVO vo) {
+	public ResponseResult saveRelationDataScope(@RequestBody RoleDataScopeVO vo) {
 		ResponseResult rep = new ResponseResult();
 		try {
 			roleService.saveRelationDataScope(vo);
@@ -151,62 +129,15 @@ public class RoleRest extends BaseRest {
 	}
 
 	/**
-	 * 根据id获取角色信息
-	 * 
-	 * @param code
-	 * @return
-	 */
-	@OpertionBLog(title = "获取角色信息")
-	@RequestMapping(value = "toModify/{code}")
-	@ResponseBody
-	public ResponseResult toModify(@PathVariable("code") Integer code) {
-		ResponseResult rep = new ResponseResult();
-		try {
-			rep.setResult(roleService.query(code));
-		} catch (AuthException e) {
-			rep.setCode(CODE_500);
-			rep.setMsg(e.getMessage());
-		} catch (Exception e) {
-			rep.setCode(CODE_500);
-			rep.setMsg("系统异常.请稍后再试");
-		}
-		return rep;
-	}
-
-	/**
-	 * 修改角色
-	 * 
-	 * @param role
-	 * @return
-	 */
-	@OpertionBLog(title = "修改角色")
-	@RequestMapping(value = "modify", method = RequestMethod.POST)
-	@ResponseBody
-	@Requestauthorize
-	public ResponseResult modify(@RequestBody Role role) {
-		ResponseResult rep = new ResponseResult();
-		try {
-			roleService.modify(role);
-		} catch (AuthException e) {
-			rep.setCode(CODE_500);
-			rep.setMsg(e.getMessage());
-		} catch (Exception e) {
-			rep.setCode(CODE_500);
-			rep.setMsg("系统异常.请稍后再试");
-		}
-		return rep;
-	}
-
-	/**
 	 * 移除角色
 	 * 
 	 * @param id
 	 * @return
 	 */
+	@Requestauthorize
 	@OpertionBLog(title = "删除角色")
-	@RequestMapping(value = "remove/{id}")
-	@ResponseBody
-	public ResponseResult remove(@PathVariable("id") Integer id) {
+	@RequestMapping(value = "delete")
+	public ResponseResult delete(@RequestParam("id") Integer id) {
 		ResponseResult rep = new ResponseResult();
 		try {
 			roleService.delete(id);

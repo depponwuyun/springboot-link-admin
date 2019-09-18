@@ -33,17 +33,10 @@ public class DataScopeService implements IDataScopeService {
 			throw new AuthException("未查询到数据权限");
 		}
 
-		for (Department dp : deptList) {
-			dp.setOpen(true);
-		}
 		List<DataScope> dsList = dataScopeDao.select(ds);
 		if (dsList != null && !dsList.isEmpty()) {
 			for (Department department : deptList) {
 				for (DataScope dataScope : dsList) {
-					if (dataScope.getPermissionId().equals(
-							department.getId().toString())) {
-						department.setChecked(true);
-					}
 				}
 			}
 		}

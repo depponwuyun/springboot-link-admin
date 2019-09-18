@@ -20,16 +20,11 @@ import com.springboot.core.algorithm.DepartmentRecursion;
 public class DepartmentService implements IDepartmentService {
 
 	@Autowired
-	private IDepartmentDao departmentInfoDao;
+	private IDepartmentDao departmentDao;
 
 	@Override
 	public List<Department> queryAll() {
-		// 优先从内存中读取，没有从数据库读取
-		List<Department> allDept = LocalCache.get(Constant.caceh_all_dept_key);
-		if (allDept == null || allDept.isEmpty()) {
-			allDept = departmentInfoDao.selectAll();
-		}
-		return allDept;
+		return departmentDao.selectAll();
 	}
 
 	/**
@@ -46,7 +41,7 @@ public class DepartmentService implements IDepartmentService {
 
 	@Override
 	public Department query(Integer id) {
-		Department dept = departmentInfoDao.selectOne(id);
+		Department dept = departmentDao.selectOne(id);
 		return dept;
 	}
 
@@ -61,17 +56,9 @@ public class DepartmentService implements IDepartmentService {
 			dept.setId(0);
 			dept.setName("部门管理树");
 			dept.setParentId(0);
-			dept.setIsParent(true);
 			list.add(dept);
 		} else {
-			list = departmentInfoDao.findChild(id);
-			if (list != null && !list.isEmpty()) {
-				for (Department right : list) {
-					if (StringUtils.isNotBlank(right.getTmpChildName())) {
-						right.setIsParent(true);
-					}
-				}
-			}
+			list = departmentDao.findChild(id);
 		}
 		return list;
 	}
@@ -82,7 +69,7 @@ public class DepartmentService implements IDepartmentService {
 			dept.setParentId(0);
 		}
 		dept.setDeleted(0);
-		int result = departmentInfoDao.insert(dept);
+		int result = departmentDao.insert(dept);
 		if (result < 0) {
 			throw new AuthException("操作失败");
 		}
@@ -91,12 +78,12 @@ public class DepartmentService implements IDepartmentService {
 
 	@Override
 	public boolean modify(Department dept) {
-		Department deptInfo = departmentInfoDao.selectOne(dept.getId());
+		Department deptInfo = departmentDao.selectOne(dept.getId());
 		if (deptInfo == null) {
 			throw new AuthException("未查询到部门信息");
 		}
 		BeanUtils.copyObject(deptInfo, dept);
-		int result = departmentInfoDao.update(deptInfo);
+		int result = departmentDao.update(deptInfo);
 		if (result < 0) {
 			throw new AuthException("操作失败");
 		}
@@ -105,12 +92,12 @@ public class DepartmentService implements IDepartmentService {
 
 	@Override
 	public boolean remove(Integer id) {
-		Department deptInfo = departmentInfoDao.selectOne(id);
+		Department deptInfo = departmentDao.selectOne(id);
 		if (deptInfo == null) {
 			throw new AuthException("未查询到部门信息");
 		}
 		deptInfo.setDeleted(1);
-		int result = departmentInfoDao.update(deptInfo);
+		int result = departmentDao.update(deptInfo);
 		if (result < 0) {
 			throw new AuthException("操作失败");
 		}

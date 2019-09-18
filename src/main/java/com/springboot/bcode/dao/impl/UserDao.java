@@ -21,8 +21,7 @@ public class UserDao extends BaseDaoImpl implements IUserDao {
 	public JqGridPage<UserInfo> selectPage(UserInfo user) {
 		List<UserInfo> list = super.find(
 				getSqlPageHandle().handlerPagingSQL(userPageSql(user, 0),
-						user.getPage(), user.getLimit()),
-				null, UserInfo.class);
+						user.getPage(), user.getLimit()), null, UserInfo.class);
 		int count = super.jdbcTemplate.queryForObject(userPageSql(user, 1),
 				null, Integer.class);
 		JqGridPage<UserInfo> page = new JqGridPage<UserInfo>(list, count,
@@ -33,7 +32,7 @@ public class UserDao extends BaseDaoImpl implements IUserDao {
 	private String userPageSql(UserInfo user, int type) {
 		StringBuilder sql = new StringBuilder();
 		if (type == 0) {
-			sql.append("select  u.uid,u.name,u.vsername,u.mobile,u.createTime,u.state,u.deptid,d.name as deptName from t_web_user u  left join t_web_dept d on d.id=u.deptid");
+			sql.append("select  u.uid,u.name,u.vsername,u.password,u.mobile,u.createTime,u.state,u.deptid,d.name as deptName from t_web_user u  left join t_web_dept d on d.id=u.deptid");
 		} else {
 			sql.append("select count(*) from t_web_user u  left join t_web_dept d on d.id=u.deptid");
 		}
@@ -51,15 +50,10 @@ public class UserDao extends BaseDaoImpl implements IUserDao {
 			sql.append(" and u.mobile like '%").append(
 					user.getMobile().trim() + "%' ");
 		}
-		if (user.getDeptid() != null) {
-			List<Department> deptList = DepartmentRecursion
-					.findSelfAndAllChild(user.getDeptid());
-			if (deptList != null && !deptList.isEmpty()) {
-				List<Integer> dataList = new ArrayList<Integer>();
-				for (Department dept : deptList) {
-					dataList.add(dept.getId());
-				}
-			}
+		if (StringUtils.isNotBlank(user.getDeptName())) {
+			sql.append(" and d.name like '%").append(
+					user.getDeptName().trim() + "%' ");
+
 		}
 		if (type == 0) {
 			if (StringUtils.isNotBlank(user.getSidx())) {
@@ -119,7 +113,7 @@ public class UserDao extends BaseDaoImpl implements IUserDao {
 
 	@Override
 	public int insert(UserInfo user) {
-		return super.insertReturnAutoIncrement(user);
+		return super.insert(user);
 	}
 
 	@Override

@@ -6,15 +6,14 @@ import com.springboot.bcode.domain.auth.Permission;
 import com.springboot.common.exception.AuthException;
 
 
-public interface IRightService {
+public interface IPermissionService {
 
-	List<Permission> queryAll(Permission right) throws AuthException;
+	List<Permission> queryAll();
 
-	List<Permission> queryChild(Integer parentCode) throws AuthException;
 
 	List<Permission> queryOwnedRight(String userId);
 
-	List<Permission> queryAllCheckByRole(Integer roleCode) throws AuthException;
+	List<Permission> queryAllByRole(String roleIds);
 
 	Permission query(Integer code) throws AuthException;
 

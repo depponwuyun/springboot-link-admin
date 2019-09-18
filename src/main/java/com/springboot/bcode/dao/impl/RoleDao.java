@@ -17,15 +17,14 @@ public class RoleDao extends BaseDaoImpl implements IRoleDao {
 	public JqGridPage<Role> selectPage(Role role) {
 		List<Role> list = super.find(
 				getSqlPageHandle().handlerPagingSQL(rolePageSql(role, 0),
-						role.getPage(), role.getLimit()),
-				null, Role.class);
+						role.getPage(), role.getLimit()), null, Role.class);
 		int count = super.jdbcTemplate.queryForObject(rolePageSql(role, 1),
 				null, Integer.class);
 		JqGridPage<Role> page = new JqGridPage<Role>(list, count,
 				role.getLimit(), role.getPage());
 		return page;
 	}
-	
+
 	private String rolePageSql(Role role, int type) {
 		StringBuilder sql = new StringBuilder();
 		if (type == 0) {
@@ -54,7 +53,6 @@ public class RoleDao extends BaseDaoImpl implements IRoleDao {
 		}
 		return sql.toString();
 	}
-	
 
 	@Override
 	public List<Role> selectByUserId(String userId) {
@@ -66,7 +64,7 @@ public class RoleDao extends BaseDaoImpl implements IRoleDao {
 	}
 
 	@Override
-	public List<Role> find(Role role) {
+	public List<Role> select(Role role) {
 		return super.find(role);
 	}
 
@@ -74,7 +72,10 @@ public class RoleDao extends BaseDaoImpl implements IRoleDao {
 	public int insert(Role role) {
 		return super.insert(role);
 	}
-
+	@Override
+	public int insertRetrunId(Role role){
+		return super.insertReturnAutoIncrement(role);
+	}
 	@Override
 	public int update(Role role) {
 		return super.update(role);
@@ -86,8 +87,8 @@ public class RoleDao extends BaseDaoImpl implements IRoleDao {
 	}
 
 	@Override
-	public int insert(RolePermission roleRelationRight) {
-		return super.insert(roleRelationRight);
+	public int[] insert(List<RolePermission> rpList) {
+		return super.batchInsert(rpList);
 	}
 
 	@Override

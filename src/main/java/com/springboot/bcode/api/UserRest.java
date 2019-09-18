@@ -1,20 +1,15 @@
 package com.springboot.bcode.api;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.bcode.domain.auth.LoginVO;
 import com.springboot.bcode.domain.auth.ModifyPwdVO;
 import com.springboot.bcode.domain.auth.UserInfo;
-import com.springboot.bcode.domain.auth.UserRoleVO;
-import com.springboot.bcode.service.ILogService;
+import com.springboot.bcode.domain.auth.UserInfoVO;
 import com.springboot.bcode.service.IUserService;
 import com.springboot.common.GlobalUser;
 import com.springboot.common.exception.AuthException;
@@ -22,7 +17,6 @@ import com.springboot.core.logger.LoggerUtil;
 import com.springboot.core.logger.OpertionBLog;
 import com.springboot.core.security.authorize.Requestauthorize;
 import com.springboot.core.web.mvc.BaseRest;
-import com.springboot.core.web.mvc.JqGridPage;
 import com.springboot.core.web.mvc.ResponseResult;
 
 @RestController
@@ -31,9 +25,6 @@ public class UserRest extends BaseRest {
 
 	@Autowired
 	private IUserService userService;
-
-	@Autowired
-	private ILogService logService;
 
 	@RequestMapping(value = "gets")
 	public ResponseResult gets() {
@@ -44,7 +35,6 @@ public class UserRest extends BaseRest {
 
 	@OpertionBLog(title = "登录")
 	@RequestMapping(value = "login", method = RequestMethod.POST)
-	@ResponseBody
 	public ResponseResult login(@RequestBody LoginVO vo) {
 		ResponseResult rep = new ResponseResult();
 		try {
@@ -94,9 +84,9 @@ public class UserRest extends BaseRest {
 		return rep;
 	}
 
+	@Requestauthorize
 	@RequestMapping(value = "list", method = RequestMethod.POST)
-	@ResponseBody
-	public ResponseResult list(@RequestBody UserInfo user) {
+	public ResponseResult list(@RequestBody UserInfoVO user) {
 		ResponseResult rep = new ResponseResult();
 		try {
 			rep.setResult(userService.queryPage(user));
@@ -109,11 +99,10 @@ public class UserRest extends BaseRest {
 
 	}
 
-	@RequestMapping(value = "add", method = RequestMethod.POST)
-	@ResponseBody
-	@OpertionBLog(title = "添加用户")
 	@Requestauthorize
-	public ResponseResult add(@RequestBody UserInfo user) {
+	@RequestMapping(value = "add", method = RequestMethod.POST)
+	@OpertionBLog(title = "添加用户")
+	public ResponseResult add(@RequestBody UserInfoVO user) {
 		ResponseResult rep = new ResponseResult();
 		try {
 			userService.add(user);
@@ -128,8 +117,6 @@ public class UserRest extends BaseRest {
 	}
 
 	@RequestMapping(value = "queryById", method = RequestMethod.POST)
-	@ResponseBody
-	@Requestauthorize
 	public ResponseResult queryById(String uid) {
 		ResponseResult rep = new ResponseResult();
 		try {
@@ -145,11 +132,10 @@ public class UserRest extends BaseRest {
 		return rep;
 	}
 
-	@RequestMapping(value = "modify", method = RequestMethod.POST)
-	@ResponseBody
-	@OpertionBLog(title = "修改用户")
 	@Requestauthorize
-	public ResponseResult modify(@RequestBody UserInfo user) {
+	@RequestMapping(value = "update", method = RequestMethod.POST)
+	@OpertionBLog(title = "修改用户")
+	public ResponseResult update(@RequestBody UserInfoVO user) {
 		ResponseResult rep = new ResponseResult();
 		try {
 			userService.modify(user);
@@ -159,24 +145,6 @@ public class UserRest extends BaseRest {
 		} catch (Exception e) {
 			rep.setCode(CODE_500);
 			rep.setMsg("修改异常.请稍后再试");
-		}
-		return rep;
-	}
-
-	@RequestMapping(value = "remove", method = RequestMethod.POST)
-	@ResponseBody
-	@OpertionBLog(title = "删除用户")
-	@Requestauthorize
-	public ResponseResult remove(String uid) {
-		ResponseResult rep = new ResponseResult();
-		try {
-			// userService.remove(uid);
-		} catch (AuthException e) {
-			rep.setCode(CODE_500);
-			rep.setMsg(e.getMessage());
-		} catch (Exception e) {
-			rep.setCode(CODE_500);
-			rep.setMsg("删除异常.请稍后再试");
 		}
 		return rep;
 	}
@@ -196,25 +164,6 @@ public class UserRest extends BaseRest {
 		}
 		return rep;
 
-	}
-
-	@OpertionBLog(title = "用户分配角色")
-	@RequestMapping(value = "saveRelationRole", method = RequestMethod.POST)
-	@ResponseBody
-	@Requestauthorize
-	public ResponseResult saveRelationRole(@RequestBody UserRoleVO vo) {
-		ResponseResult rep = new ResponseResult();
-		try {
-			userService.saveRelationRole(vo);
-		} catch (AuthException e) {
-			rep.setCode(CODE_500);
-			rep.setMsg(e.getMessage());
-		} catch (Exception e) {
-			rep.setCode(CODE_500);
-			rep.setMsg("系统异常.请稍后再试");
-		}
-
-		return rep;
 	}
 
 }

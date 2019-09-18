@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.link.tool.bean.BeanUtils;
 import com.link.tool.lang.StringUtils;
 import com.link.tool.utils.MD5Utils;
+import com.link.tool.utils.UUIDUtils;
 import com.springboot.bcode.dao.IUserDao;
 import com.springboot.bcode.domain.auth.DataScope;
 import com.springboot.bcode.domain.auth.Department;
@@ -20,11 +22,11 @@ import com.springboot.bcode.domain.auth.ModifyPwdVO;
 import com.springboot.bcode.domain.auth.Permission;
 import com.springboot.bcode.domain.auth.Role;
 import com.springboot.bcode.domain.auth.UserInfo;
+import com.springboot.bcode.domain.auth.UserInfoVO;
 import com.springboot.bcode.domain.auth.UserRole;
-import com.springboot.bcode.domain.auth.UserRoleVO;
 import com.springboot.bcode.service.IDataScopeService;
 import com.springboot.bcode.service.IDepartmentService;
-import com.springboot.bcode.service.IRightService;
+import com.springboot.bcode.service.IPermissionService;
 import com.springboot.bcode.service.IRoleService;
 import com.springboot.bcode.service.IUserService;
 import com.springboot.common.AppToken;
@@ -41,7 +43,7 @@ public class UserService implements IUserService {
 	@Autowired
 	private IRoleService roleService;
 	@Autowired
-	private IRightService rightService;
+	private IPermissionService rightService;
 	@Autowired
 	private IDataScopeService dataScopeService;
 	@Autowired
@@ -108,51 +110,45 @@ public class UserService implements IUserService {
 			throw new SystemException("未查询到当前用户的部门");
 		}
 		user.setDeptName(dept.getName());
-		List<Role> roles = roleService.queryOwnedRole(user.getUid());
+		List<Role> roles = roleService.queryByUser(user.getUid());
 		if (roles == null || roles.isEmpty()) {
 			throw new SystemException("当前用户未分配角色");
 		}
 		user.setRoles(roles);
-		String roleName = "";
-		for (Role role : roles) {
-			roleName += role.getName() + ";";
-		}
-		user.setRoleName(roleName);
-		List<Permission> ownedRightList = rightService.queryOwnedRight(user
+
+		List<Permission> permissionList = rightService.queryOwnedRight(user
 				.getUid());
 
-		if (ownedRightList == null || ownedRightList.isEmpty()) {
+		if (permissionList == null || permissionList.isEmpty()) {
 			throw new SystemException("当前用户为的角色未分配权限");
 		}
 		// 用户菜单
-		List<Permission> ownedMenuRightList = new ArrayList<Permission>();
+		List<Permission> menus = new ArrayList<Permission>();
 		// 用户拥有的功能权限
-		List<Permission> ownedFunctionList = new ArrayList<Permission>();
-		for (Permission right : ownedRightList) {
-			if (right.isMenu()) {
-				ownedMenuRightList.add(right);
+		List<Permission> permissions = new ArrayList<Permission>();
+		for (Permission perm : permissionList) {
+			if (perm.isMenu()) {
+				menus.add(perm);
 			}
-			if (right.isFunction()) {
-				ownedFunctionList.add(right);
+			if (perm.isPermission()) {
+				permissions.add(perm);
 			}
 		}
 		// 用户数据权限
-		List<DataScope> ownedDateScopeList = new ArrayList<DataScope>();
-		for (Role role : roles) {
-			ownedDateScopeList
-					.addAll(dataScopeService.queryByRole(role.getId()));
-		}
-		Set<DataScope> ownedDatasocpeSet = new HashSet<DataScope>();
-		for (DataScope dataScope : ownedDateScopeList) {
-			ownedDatasocpeSet.add(dataScope);
-		}
-		ownedDateScopeList = new ArrayList<DataScope>(ownedDatasocpeSet);
+		/*
+		 * List<DataScope> ownedDateScopeList = new ArrayList<DataScope>(); for
+		 * (Role role : roles) { ownedDateScopeList
+		 * .addAll(dataScopeService.queryByRole(role.getId())); } Set<DataScope>
+		 * ownedDatasocpeSet = new HashSet<DataScope>(); for (DataScope
+		 * dataScope : ownedDateScopeList) { ownedDatasocpeSet.add(dataScope); }
+		 * ownedDateScopeList = new ArrayList<DataScope>(ownedDatasocpeSet);
+		 */
 
 		// 更新用户的权限
 		// ownedMenuRightList = RightRecursion.recursion(ownedMenuRightList);
-		user.setMenus(ownedMenuRightList);
-		user.setPermissions(ownedFunctionList);
-		user.setOwnedDateScopeList(ownedDateScopeList);
+		user.setMenus(menus);
+		user.setPermissions(permissions);
+		// user.setOwnedDateScopeList(ownedDateScopeList);
 		GlobalUser.setUserInfo(user);
 		return user;
 	}
@@ -181,16 +177,18 @@ public class UserService implements IUserService {
 		}
 		userInfo.setPassword(MD5Utils.getMD5Encoding(vo.getNewPassword()));
 		userDao.update(userInfo);
-		//更新内存中的密码
+		// 更新内存中的密码
 		GlobalUser.setUserInfo(userInfo);
 
 	}
 
 	@Override
-	public JqGridPage<UserInfo> queryPage(UserInfo user) {
-		if (user == null) {
+	public JqGridPage<UserInfo> queryPage(UserInfoVO vo) {
+		if (vo == null) {
 			throw new AuthException("参数不能为空");
 		}
+		UserInfo user = new UserInfo();
+		BeanUtils.copyObject(user, vo);
 		JqGridPage<UserInfo> page = userDao.selectPage(user);
 		if (page.getRows() != null && !page.getRows().isEmpty()) {
 			for (UserInfo userInfo : page.getRows()) {
@@ -199,15 +197,9 @@ public class UserService implements IUserService {
 				if (dept != null) {
 					userInfo.setCompanyName(dept.getName());
 				}
-				List<Role> roleList = roleService.queryOwnedRole(userInfo
-						.getUid());
-				if (roleList != null && !roleList.isEmpty()) {
-					String roleName = "";
-					for (Role role : roleList) {
-						roleName += role.getName() + ";";
-					}
-					userInfo.setRoleName(roleName);
-				}
+				List<Role> roleList = roleService
+						.queryByUser(userInfo.getUid());
+				userInfo.setRoles(roleList);
 			}
 		}
 		return page;
@@ -215,55 +207,95 @@ public class UserService implements IUserService {
 
 	@Transactional(value = "baseTransactionManager")
 	@Override
-	public boolean add(UserInfo user) throws AuthException {
-		if (user == null) {
-			throw new AuthException("保存数据不能为空");
-		}
-		if (StringUtils.isBlank(user.getVserName())) {
+	public boolean add(UserInfoVO vo) throws AuthException {
+
+		if (StringUtils.isBlank(vo.getVserName())) {
 			throw new AuthException("真实姓名不能为空");
 		}
-		if (StringUtils.isBlank(user.getName())) {
+		if (StringUtils.isBlank(vo.getName())) {
 			throw new AuthException("登陆名不能为空");
 		}
-		if (StringUtils.isBlank(user.getPassword())) {
+		if (StringUtils.isBlank(vo.getPassword())) {
 			throw new AuthException("登陆密码不能为空");
 		}
-		// user.setUid(UUIDUtils.generateUUID());
+		if (vo.getRoleIds() == null || vo.getRoleIds().length == 0) {
+			throw new AuthException("请分配角色");
+		}
+
+		UserInfo user = new UserInfo();
+		BeanUtils.copyObject(user, vo);
 		user.setCreateTime(new Date());
 		String password = MD5Utils.getMD5Encoding(user.getPassword());
 		user.setPassword(password);
+		user.setUid(UUIDUtils.generateUUID());
+		// 保存用户信息
 		int result = userDao.insert(user);
 		if (result < 0) {
 			throw new AuthException("保存失败");
 		}
+
+		List<UserRole> urList = new ArrayList<UserRole>();
+		UserRole ur;
+		for (Integer roleId : vo.getRoleIds()) {
+			ur = new UserRole();
+			ur.setUserId(user.getUid());
+			ur.setRoleId(roleId);
+			urList.add(ur);
+		}
+		// 保存用户分配的角色
+		saveRelationRole(urList);
 		return true;
 	}
 
 	@Override
-	public boolean modify(UserInfo user) throws AuthException {
+	public boolean modify(UserInfoVO vo) throws AuthException {
+
+		if (vo.getUid() == null) {
+			throw new AuthException("用户不存在");
+		}
+		if (vo.getRoleIds() == null || vo.getRoleIds().length == 0) {
+			throw new AuthException("请分配角色");
+		}
+
+		UserInfo user = userDao.select(vo.getUid());
 		if (user == null) {
-			throw new AuthException("修改数据不能为空");
+			throw new AuthException("用户不存在");
 		}
-		if (user.getUid() == null) {
-			throw new AuthException("userId不能为空");
+		String password = "";
+		if (!user.getPassword().equals(vo.getPassword())) {
+			password = MD5Utils.getMD5Encoding(vo.getPassword());
 		}
-		UserInfo oldUser = userDao.select(user.getUid());
-		if (oldUser == null) {
-			throw new AuthException("userInfo不存在");
-		}
-		if (!oldUser.getName().equals(user.getName())) {
-			throw new AuthException("登陆账号不能修改");
-		}
-		if (!oldUser.getPassword().equals(user.getPassword())) {
-			String password = MD5Utils.getMD5Encoding(user.getPassword());
+		BeanUtils.copyObject(user, vo);
+		if (StringUtils.isNotBlank(password)) {
 			user.setPassword(password);
 		}
 		int result = userDao.update(user);
 		if (result < 0) {
 			throw new AuthException("修改失败");
 		}
+
+		// 删除用户角色
+		UserRole delUr = new UserRole();
+		delUr.setUserId(user.getUid());
+		userDao.delete(delUr);
+
+		List<UserRole> urList = new ArrayList<UserRole>();
+		UserRole ur;
+		for (Integer roleId : vo.getRoleIds()) {
+			ur = new UserRole();
+			ur.setUserId(user.getUid());
+			ur.setRoleId(roleId);
+			urList.add(ur);
+		}
+		// 保存用户分配的角色
+		saveRelationRole(urList);
 		return true;
 
+	}
+
+	public boolean saveRelationRole(List<UserRole> urList) {
+		userDao.insert(urList);
+		return true;
 	}
 
 	@Override
@@ -288,34 +320,6 @@ public class UserService implements IUserService {
 		}
 		UserInfo userInfo = userDao.select(uid);
 		return userInfo;
-	}
-
-	@Transactional(value = "baseTransactionManager")
-	@Override
-	public boolean saveRelationRole(UserRoleVO vo) {
-		if (vo == null) {
-			throw new AuthException("修改数据不能为空");
-		}
-		if (vo.getUserId() == null) {
-			throw new AuthException("请先选择用户");
-		}
-		if (vo.getRoleId() == null) {
-			throw new AuthException("请选择角色");
-		}
-		UserRole del = new UserRole();
-		del.setUserId(vo.getUserId());
-		userDao.delete(del);
-
-		List<UserRole> list = new ArrayList<UserRole>();
-		UserRole relationRole;
-		for (String roleId : vo.getRoleId()) {
-			relationRole = new UserRole();
-			relationRole.setUserId(vo.getUserId());
-			relationRole.setRoleId(Integer.parseInt(roleId));
-			list.add(relationRole);
-		}
-		userDao.insert(list);
-		return true;
 	}
 
 	@Override

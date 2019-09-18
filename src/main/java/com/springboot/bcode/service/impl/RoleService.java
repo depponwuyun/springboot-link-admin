@@ -1,5 +1,6 @@
 package com.springboot.bcode.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,14 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.link.tool.bean.BeanUtils;
 import com.link.tool.lang.StringUtils;
 import com.springboot.bcode.dao.IDataScopeDao;
-import com.springboot.bcode.dao.IRightDao;
+import com.springboot.bcode.dao.IPermissionDao;
 import com.springboot.bcode.dao.IRoleDao;
 import com.springboot.bcode.dao.IUserDao;
 import com.springboot.bcode.domain.auth.DataScope;
 import com.springboot.bcode.domain.auth.Role;
 import com.springboot.bcode.domain.auth.RoleDataScopeVO;
 import com.springboot.bcode.domain.auth.RolePermission;
-import com.springboot.bcode.domain.auth.RolePermissionVO;
 import com.springboot.bcode.service.IRoleService;
 import com.springboot.common.exception.AuthException;
 import com.springboot.core.web.mvc.JqGridPage;
@@ -25,7 +25,7 @@ import com.springboot.core.web.mvc.JqGridPage;
 public class RoleService implements IRoleService {
 
 	@Autowired
-	private IRightDao rightDao;
+	private IPermissionDao rightDao;
 	@Autowired
 	private IUserDao userDao;
 	@Autowired
@@ -39,44 +39,90 @@ public class RoleService implements IRoleService {
 	}
 
 	@Override
-	public List<Role> queryAll(Role role) throws AuthException {
-		return roleDao.find(role);
+	public List<Role> queryAll() throws AuthException {
+		return roleDao.select(new Role());
 	}
 
 	@Override
-	public List<Role> queryOwnedRole(String userId) throws AuthException {
+	public List<Role> queryByUser(String userId) throws AuthException {
 		if (StringUtils.isBlank(userId)) {
 			throw new AuthException("userId不能为空");
 		}
 		return roleDao.selectByUserId(userId);
 	}
 
+	@Transactional(value = "baseTransactionManager")
 	@Override
-	public boolean add(Role right) throws AuthException {
-		if (right == null) {
+	public boolean add(Role role) throws AuthException {
+		if (role == null) {
 			throw new AuthException("保存数据不能为空");
 		}
-		if (StringUtils.isBlank(right.getName())) {
-			throw new AuthException("name不能为空");
+		if (StringUtils.isBlank(role.getName())) {
+			throw new AuthException("角色名不能为空");
 		}
-		int result = roleDao.insert(right);
-		if (result < 0) {
+		if (StringUtils.isBlank(role.getPermIds())) {
+			throw new AuthException("权限许可不能为空");
+		}
+		int result = roleDao.insertRetrunId(role);
+		if (result <= 0) {
 			throw new AuthException("执行失败");
 		}
+		role.setId(result);
+		saveRelationRight(role);
 		return true;
 	}
 
+	@Transactional(value = "baseTransactionManager")
 	@Override
-	public boolean modify(Role role) throws AuthException {
-		Role rightInfo = roleDao.select(role.getId());
-		if (rightInfo == null) {
+	public boolean update(Role role) throws AuthException {
+
+		if (role == null) {
+			throw new AuthException("保存数据不能为空");
+		}
+		if (role.getId() == null) {
+			throw new AuthException("保存数据不能为空");
+		}
+		if (StringUtils.isBlank(role.getName())) {
+			throw new AuthException("角色名不能为空");
+		}
+		if (StringUtils.isBlank(role.getPermIds())) {
+			throw new AuthException("权限许可不能为空");
+		}
+
+		Role roleInfo = roleDao.select(role.getId());
+		if (roleInfo == null) {
 			throw new AuthException("未查询到角色信息");
 		}
-		BeanUtils.copyObject(rightInfo, role);
-		int result = roleDao.update(rightInfo);
+		BeanUtils.copyObject(roleInfo, role);
+		int result = roleDao.update(roleInfo);
 		if (result < 0) {
 			throw new AuthException("执行失败");
 		}
+
+		RolePermission rp = new RolePermission();
+		rp.setRoleId(role.getId());
+		roleDao.delete(rp);
+
+		saveRelationRight(role);
+		return true;
+	}
+
+	public boolean saveRelationRight(Role role) throws AuthException {
+
+		String permIds[] = role.getPermIds().split(",");
+		if (permIds == null || permIds.length == 0) {
+			throw new AuthException("权限许可不能为空");
+		}
+
+		List<RolePermission> rpList = new ArrayList<RolePermission>();
+		RolePermission rp = null;
+		for (int i = 0; i < permIds.length; i++) {
+			rp = new RolePermission();
+			rp.setRoleId(role.getId());
+			rp.setPermId(Integer.parseInt(permIds[i]));
+			rpList.add(rp);
+		}
+		roleDao.insert(rpList);
 		return true;
 	}
 
@@ -108,40 +154,11 @@ public class RoleService implements IRoleService {
 
 		Role role = new Role();
 		role.setId(code);
-		List<Role> list = roleDao.find(role);
+		List<Role> list = roleDao.select(role);
 		if (list != null && !list.isEmpty()) {
 			return list.get(0);
 		}
 		return null;
-	}
-
-	@Transactional(value = "baseTransactionManager")
-	@Override
-	public boolean saveRelationRight(RolePermissionVO relationRightVO)
-			throws AuthException {
-
-		if (relationRightVO == null) {
-			throw new AuthException("条件不能为空");
-		}
-		if (relationRightVO.getRightIdList() == null
-				|| relationRightVO.getRightIdList().isEmpty()) {
-			throw new AuthException("条件不能为空");
-		}
-		if (relationRightVO.getRoleId() == null) {
-			throw new AuthException("条件不能为空");
-		}
-		// 删除角色对应的权限 RoleRelationRight
-		RolePermission roleRelationRight = new RolePermission();
-		roleRelationRight.setRoleId(relationRightVO.getRoleId());
-		roleDao.delete(roleRelationRight);
-
-		// 循环插入角色对应的权限
-		for (Integer rightId : relationRightVO.getRightIdList()) {
-			roleRelationRight.setRightId(rightId);
-			roleDao.insert(roleRelationRight);
-		}
-
-		return true;
 	}
 
 	@Transactional(value = "baseTransactionManager")

@@ -9,7 +9,7 @@ public class RolePermission {
 	@Columns(column = "role_id")
 	private Integer roleId;
 	@Columns(column = "right_id")
-	private Integer rightId;
+	private Integer permId;
 
 	public Integer getRoleId() {
 		return roleId;
@@ -19,12 +19,14 @@ public class RolePermission {
 		this.roleId = roleId;
 	}
 
-	public Integer getRightId() {
-		return rightId;
+	public Integer getPermId() {
+		return permId;
 	}
 
-	public void setRightId(Integer rightId) {
-		this.rightId = rightId;
+	public void setPermId(Integer permId) {
+		this.permId = permId;
 	}
+
+	
 
 }

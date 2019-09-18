@@ -1,10 +1,12 @@
 package com.springboot.bcode.domain.auth;
 
+import java.util.List;
+
 import com.springboot.core.jdbc.annotation.Columns;
 import com.springboot.core.jdbc.annotation.Tables;
 
 @Tables(table = "t_web_dept")
-public class Department {
+public class Department implements Comparable<Department> {
 
 	// Fields
 	@Columns(column = "id", primaryKey = true)
@@ -21,14 +23,20 @@ public class Department {
 	private Integer forService;// 1医院服务部门，0行政后勤部门
 	@Columns(column = "deleted")
 	private Integer deleted; // 1已删除，0未删除
-	private Boolean isParent;
-	private Boolean checked;
-	private Boolean open;
-	// 用户判断是否isParent
-	private String tmpChildName;
 
+	private String parentName;
+
+	// 子
+	private List<Department> childrens;
 	private Integer nodeDeptId;//
 	private String nodeDeptName;// 如果部门是集团直属部门，nodeDeptName为集团；如果为分公司下属部门，nodeDeptName为分公司
+
+	public boolean isRoot() {
+		if (this.parentId == 0) {
+			return true;
+		}
+		return false;
+	}
 
 	public Integer getId() {
 		return id;
@@ -62,44 +70,20 @@ public class Department {
 		this.sorts = sorts;
 	}
 
-	public Boolean getIsParent() {
-		return isParent;
-	}
-
-	public void setIsParent(Boolean isParent) {
-		this.isParent = isParent;
-	}
-
-	public Boolean getChecked() {
-		return checked;
-	}
-
-	public void setChecked(Boolean checked) {
-		this.checked = checked;
-	}
-
-	public Boolean getOpen() {
-		return open;
-	}
-
-	public void setOpen(Boolean open) {
-		this.open = open;
-	}
-
-	public String getTmpChildName() {
-		return tmpChildName;
-	}
-
-	public void setTmpChildName(String tmpChildName) {
-		this.tmpChildName = tmpChildName;
-	}
-
 	public Integer getNodeDeptId() {
 		return nodeDeptId;
 	}
 
 	public void setNodeDeptId(Integer nodeDeptId) {
 		this.nodeDeptId = nodeDeptId;
+	}
+
+	public String getParentName() {
+		return parentName;
+	}
+
+	public void setParentName(String parentName) {
+		this.parentName = parentName;
 	}
 
 	public String getNodeDeptName() {
@@ -132,6 +116,66 @@ public class Department {
 
 	public void setDeleted(Integer deleted) {
 		this.deleted = deleted;
+	}
+
+	public List<Department> getChildrens() {
+		return childrens;
+	}
+
+	public void setChildrens(List<Department> childrens) {
+		this.childrens = childrens;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((levels == null) ? 0 : levels.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result
+				+ ((parentId == null) ? 0 : parentId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Department other = (Department) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (levels == null) {
+			if (other.levels != null)
+				return false;
+		} else if (!levels.equals(other.levels))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (parentId == null) {
+			if (other.parentId != null)
+				return false;
+		} else if (!parentId.equals(other.parentId))
+			return false;
+		return true;
+	}
+
+	@Override
+	public int compareTo(Department o) {
+		if (this.getSorts() != null && o.getSorts() != null) {
+			return this.getSorts().compareTo(o.getSorts());
+		}
+		return -1;
 	}
 
 }

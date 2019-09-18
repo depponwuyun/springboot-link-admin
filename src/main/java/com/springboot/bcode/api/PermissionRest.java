@@ -1,29 +1,31 @@
 package com.springboot.bcode.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.springboot.bcode.domain.auth.Department;
-import com.springboot.bcode.service.IDepartmentService;
+import com.springboot.bcode.domain.auth.Permission;
+import com.springboot.bcode.service.IPermissionService;
 import com.springboot.common.exception.AuthException;
-import com.springboot.core.algorithm.DepartmentRecursion;
+import com.springboot.core.algorithm.PermissionRecursion;
 import com.springboot.core.logger.OpertionBLog;
 import com.springboot.core.security.authorize.Requestauthorize;
 import com.springboot.core.web.mvc.BaseRest;
 import com.springboot.core.web.mvc.ResponseResult;
 
 @RestController
-@RequestMapping(value = "/rest/department")
-public class DepartmentRest extends BaseRest {
+@RequestMapping(value = "rest/permission")
+public class PermissionRest extends BaseRest {
+
 	@Autowired
-	private IDepartmentService departmentService;
+	private IPermissionService rightService;
 
 	/**
-	 * 查询所有部门
+	 * 获取所有权限
 	 * 
 	 * @return
 	 */
@@ -32,8 +34,7 @@ public class DepartmentRest extends BaseRest {
 	public ResponseResult queryAll() {
 		ResponseResult rep = new ResponseResult();
 		try {
-			rep.setResult(DepartmentRecursion.recursion(departmentService
-					.queryAll()));
+			rep.setResult(PermissionRecursion.recursion(rightService.queryAll()));
 		} catch (AuthException e) {
 			rep.setCode(CODE_500);
 			rep.setMsg(e.getMessage());
@@ -44,19 +45,30 @@ public class DepartmentRest extends BaseRest {
 		return rep;
 	}
 
-	/**
-	 * 保存部门
-	 * 
-	 * @param dept
-	 * @return
-	 */
+	@RequestMapping(value = "allByRole/{roleId}")
+	public ResponseResult queryAllCheckByRole(
+			@PathVariable("roleId") String roleId) {
+		ResponseResult rep = new ResponseResult();
+		try {
+			rep.setResult(PermissionRecursion.recursion(rightService
+					.queryAllByRole(roleId)));
+		} catch (AuthException e) {
+			rep.setCode(CODE_500);
+			rep.setMsg(e.getMessage());
+		} catch (Exception e) {
+			rep.setCode(CODE_500);
+			rep.setMsg("系统异常.请稍后再试");
+		}
+		return rep;
+	}
+
 	@Requestauthorize
-	@OpertionBLog(title = "新增部门")
+	@OpertionBLog(title = "新增权限")
 	@RequestMapping(value = "add", method = RequestMethod.POST)
-	public ResponseResult add(@RequestBody Department dept) {
+	public ResponseResult add(@RequestBody Permission permission) {
 		ResponseResult rep = new ResponseResult();
 		try {
-			departmentService.save(dept);
+			rightService.save(permission);
 		} catch (AuthException e) {
 			rep.setCode(CODE_500);
 			rep.setMsg(e.getMessage());
@@ -68,19 +80,13 @@ public class DepartmentRest extends BaseRest {
 		return rep;
 	}
 
-	/**
-	 * 修改
-	 * 
-	 * @param dept
-	 * @return
-	 */
 	@Requestauthorize
-	@OpertionBLog(title = "修改部门")
+	@OpertionBLog(title = "修改权限")
 	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public ResponseResult update(@RequestBody Department dept) {
+	public ResponseResult update(@RequestBody Permission right) {
 		ResponseResult rep = new ResponseResult();
 		try {
-			departmentService.modify(dept);
+			rightService.modify(right);
 		} catch (AuthException e) {
 			rep.setCode(CODE_500);
 			rep.setMsg(e.getMessage());
@@ -91,19 +97,13 @@ public class DepartmentRest extends BaseRest {
 		return rep;
 	}
 
-	/**
-	 * 移除
-	 * 
-	 * @param id
-	 * @return
-	 */
 	@Requestauthorize
-	@OpertionBLog(title = "删除部门")
+	@OpertionBLog(title = "删除权限")
 	@RequestMapping(value = "delete")
 	public ResponseResult delete(@RequestParam("id") Integer id) {
 		ResponseResult rep = new ResponseResult();
 		try {
-			departmentService.remove(id);
+			rightService.delete(id);
 		} catch (AuthException e) {
 			rep.setCode(CODE_500);
 			rep.setMsg(e.getMessage());
@@ -113,4 +113,5 @@ public class DepartmentRest extends BaseRest {
 		}
 		return rep;
 	}
+
 }

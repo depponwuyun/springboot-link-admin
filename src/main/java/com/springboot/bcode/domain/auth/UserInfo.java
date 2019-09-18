@@ -10,7 +10,7 @@ import com.springboot.core.web.mvc.JqGridParam;
 @Tables(table = "t_web_user")
 public class UserInfo extends JqGridParam {
 
-	@Columns(column = "uid", primaryKey = true)
+	@Columns(column = "uid", primaryKey = true, autoIncrement = false)
 	private String uid;
 	@Columns(column = "name")
 	private String name;
@@ -28,16 +28,14 @@ public class UserInfo extends JqGridParam {
 	private Integer deptid;// 部门id
 	@Columns(column = "email")
 	private String email;
-	private String avatar="pic";
-	private String introduction="hello word";
-	
-	
+	private String avatar = "pic";
+	private String introduction = "hello word";
+
 	private String token;
 	private String deptName;// 部门名称
 	private Integer companyId;// 公司id
 	private String companyName;// 部门对应的总节点部门（总公司，医院，集团）
-	private String roleName;// 角色名称
-	//角色
+	// 角色
 	private List<Role> roles;
 
 	// 用户的菜单
@@ -79,13 +77,20 @@ public class UserInfo extends JqGridParam {
 		this.state = state;
 	}
 
-
 	public String getUid() {
 		return uid;
 	}
 
 	public void setUid(String uid) {
 		this.uid = uid;
+	}
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
 	}
 
 	public String getName() {
@@ -96,15 +101,6 @@ public class UserInfo extends JqGridParam {
 		this.name = name;
 	}
 
-
-	public String getRoleName() {
-		return roleName;
-	}
-
-	public void setRoleName(String roleName) {
-		this.roleName = roleName;
-	}
-
 	public List<DataScope> getOwnedDateScopeList() {
 		return ownedDateScopeList;
 	}
@@ -112,7 +108,6 @@ public class UserInfo extends JqGridParam {
 	public void setOwnedDateScopeList(List<DataScope> ownedDateScopeList) {
 		this.ownedDateScopeList = ownedDateScopeList;
 	}
-
 
 	public Integer getDeptid() {
 		return deptid;
@@ -168,14 +163,6 @@ public class UserInfo extends JqGridParam {
 
 	public void setToken(String token) {
 		this.token = token;
-	}
-
-	public List<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
 	}
 
 	public List<Permission> getMenus() {

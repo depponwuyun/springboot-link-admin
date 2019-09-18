@@ -1,7 +1,10 @@
 package com.springboot.core.algorithm;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.link.tool.bean.BeanUtils;
 import com.springboot.bcode.domain.auth.Department;
@@ -9,6 +12,58 @@ import com.springboot.common.LocalCache;
 import com.springboot.common.constant.Constant;
 
 public class DepartmentRecursion {
+
+	// 递归将数据tree存储结构
+	public static List<Department> recursion(List<Department> allList) {
+		if (allList == null || allList.isEmpty()) {
+			return null;
+		}
+		Set<Department> ownedSet = new HashSet<Department>();
+		for (Department right : allList) {
+			ownedSet.add(right);
+		}
+		allList = new ArrayList<Department>(ownedSet);
+
+		List<Department> ownedRightTree = new ArrayList<Department>();
+		for (Department right : allList) {
+			if (right.isRoot()) {
+				// 遍历根节点
+				buildChild(right, allList);
+				ownedRightTree.add(right);
+			}
+		}
+		Collections.sort(ownedRightTree);
+		return ownedRightTree;
+	}
+
+	/**
+	 * 构建下级菜单
+	 * 
+	 * @param node
+	 */
+	private static void buildChild(Department node, List<Department> allList) {
+		List<Department> childrens = null;
+		Integer code = node.getId();
+		for (Department child : allList) {
+			// 获取子节点
+			if (code.equals(child.getParentId())) {
+				if (null == childrens) {
+					childrens = new ArrayList<Department>();
+				}
+				if (!child.isRoot()) {
+					childrens.add(child);
+				}
+			}
+		}
+		if (null != childrens && !childrens.isEmpty()) {
+			Collections.sort(childrens);
+			node.setChildrens(childrens);
+			for (Department child : childrens) {
+				buildChild(child, allList);
+			}
+		}
+	}
+
 	/**
 	 * 
 	 * 根据部门id查找所有下级部门(包含自己部门)

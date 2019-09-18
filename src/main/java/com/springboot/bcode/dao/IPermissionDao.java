@@ -4,12 +4,12 @@ import java.util.List;
 
 import com.springboot.bcode.domain.auth.Permission;
 
-public interface IRightDao {
+public interface IPermissionDao {
 	Permission select(Integer id);
 
 	List<Permission> selectAll();
 
-	List<Permission> selectByRoleCode(Integer roleCode);
+	List<Permission> selectByRole(String  roleIds);
 
 	List<Permission> find(Permission right);
 

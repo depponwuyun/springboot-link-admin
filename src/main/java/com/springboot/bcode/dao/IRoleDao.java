@@ -13,10 +13,12 @@ public interface IRoleDao {
 
 	Role select(Integer id);
 
-	List<Role> find(Role role);
+	List<Role> select(Role role);
 
-	int insert(RolePermission roleRelationRight);
+	int [] insert(List<RolePermission> rpList);
 
+	int insertRetrunId(Role role);
+	
 	int insert(Role role);
 
 	int update(Role role);

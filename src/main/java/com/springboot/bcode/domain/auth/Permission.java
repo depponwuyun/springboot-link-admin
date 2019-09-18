@@ -31,15 +31,8 @@ public class Permission implements Comparable<Permission> {
 	private Integer sorts;
 	@Columns(column = "dataScope")
 	private Integer dataScope; // 数据权限，1设置，0不设置
-	private Boolean isParent;
-	private Boolean checked;
-	private Boolean open;
-	// 用户判断是否isParent
-	private String tmpChildName;
 	// 子权限集合
 	private List<Permission> childrens;
-	// 子导航栏
-	private Permission barChild;
 
 	public boolean isMenu() {
 		if (this.types == 0) {
@@ -55,7 +48,7 @@ public class Permission implements Comparable<Permission> {
 		return false;
 	}
 
-	public boolean isFunction() {
+	public boolean isPermission() {
 		if (this.types == 1) {
 			return true;
 		}
@@ -110,37 +103,8 @@ public class Permission implements Comparable<Permission> {
 		this.childrens = childrens;
 	}
 
-	public Permission getBarChild() {
-		return barChild;
-	}
 
-	public void setBarChild(Permission barChild) {
-		this.barChild = barChild;
-	}
 
-	public Boolean getIsParent() {
-		return isParent;
-	}
-
-	public void setIsParent(Boolean isParent) {
-		this.isParent = isParent;
-	}
-
-	public Boolean getChecked() {
-		return checked;
-	}
-
-	public void setChecked(Boolean checked) {
-		this.checked = checked;
-	}
-
-	public Boolean getOpen() {
-		return open;
-	}
-
-	public void setOpen(Boolean open) {
-		this.open = open;
-	}
 
 	public Integer getId() {
 		return id;
@@ -182,28 +146,13 @@ public class Permission implements Comparable<Permission> {
 		this.sorts = sorts;
 	}
 
-	public String getTmpChildName() {
-		return tmpChildName;
-	}
 
-	public void setTmpChildName(String tmpChildName) {
-		this.tmpChildName = tmpChildName;
-	}
-
-	/*
-	 * public Integer getDataScope() { return dataScope; }
-	 * 
-	 * public void setDataScope(Integer dataScope) { this.dataScope = dataScope;
-	 * }
-	 */
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((isParent == null) ? 0 : isParent.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		result = prime * result + ((types == null) ? 0 : types.hashCode());
@@ -224,11 +173,6 @@ public class Permission implements Comparable<Permission> {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
-			return false;
-		if (isParent == null) {
-			if (other.isParent != null)
-				return false;
-		} else if (!isParent.equals(other.isParent))
 			return false;
 		if (name == null) {
 			if (other.name != null)
