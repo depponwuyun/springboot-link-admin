@@ -122,6 +122,19 @@
 			<layout>default</layout>
 		</repository>
 	</repositories>
+	
+	
+	<distributionManagement>
+    <repository>
+        <id>rdc-releases</id>
+        <url>https://repo.rdc.aliyun.com/repository/105343-release-kKtRTB/</url>
+    </repository>
+    <snapshotRepository>
+        <id>rdc-snapshots</id>
+        <url>https://repo.rdc.aliyun.com/repository/105343-snapshot-sWGNp2/</url>
+    </snapshotRepository>
+</distributionManagement>
+	
 
 	<build>
 		<plugins>

@@ -9,7 +9,7 @@ import com.springboot.core.web.mvc.JqGridPage;
 
 public interface IUserService {
 
-	JqGridPage<UserInfo> queryPage(UserInfoVO user);
+	JqGridPage<UserInfo> queryPage(UserInfo user);
 
 	String login(LoginVO vo);
 

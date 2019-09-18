@@ -2,9 +2,7 @@ package com.springboot.bcode.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +13,6 @@ import com.link.tool.lang.StringUtils;
 import com.link.tool.utils.MD5Utils;
 import com.link.tool.utils.UUIDUtils;
 import com.springboot.bcode.dao.IUserDao;
-import com.springboot.bcode.domain.auth.DataScope;
 import com.springboot.bcode.domain.auth.Department;
 import com.springboot.bcode.domain.auth.LoginVO;
 import com.springboot.bcode.domain.auth.ModifyPwdVO;
@@ -183,12 +180,10 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public JqGridPage<UserInfo> queryPage(UserInfoVO vo) {
-		if (vo == null) {
+	public JqGridPage<UserInfo> queryPage(UserInfo user) {
+		if (user == null) {
 			throw new AuthException("参数不能为空");
 		}
-		UserInfo user = new UserInfo();
-		BeanUtils.copyObject(user, vo);
 		JqGridPage<UserInfo> page = userDao.selectPage(user);
 		if (page.getRows() != null && !page.getRows().isEmpty()) {
 			for (UserInfo userInfo : page.getRows()) {

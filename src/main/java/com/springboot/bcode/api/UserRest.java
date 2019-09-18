@@ -86,7 +86,7 @@ public class UserRest extends BaseRest {
 
 	@Requestauthorize
 	@RequestMapping(value = "list", method = RequestMethod.POST)
-	public ResponseResult list(@RequestBody UserInfoVO user) {
+	public ResponseResult list(@RequestBody UserInfo user) {
 		ResponseResult rep = new ResponseResult();
 		try {
 			rep.setResult(userService.queryPage(user));

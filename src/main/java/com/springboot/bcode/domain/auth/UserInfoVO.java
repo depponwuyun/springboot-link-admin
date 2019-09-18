@@ -1,6 +1,8 @@
 package com.springboot.bcode.domain.auth;
 
-public class UserInfoVO {
+import com.springboot.core.web.mvc.JqGridParam;
+
+public class UserInfoVO extends JqGridParam{
 	private String uid;
 	private String name;
 	private String password;
