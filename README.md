@@ -27,13 +27,7 @@ jar源码 [link-tool-pom][https://github.com/252956/link-tool-pom)
   <groupId>com.link.tool</groupId>
   <artifactId>link-tool</artifactId>
   <version>1.1</version>
-</dependency>
-		
-<dependency>
-  <groupId>com.link.tool</groupId>
-  <artifactId>link-tool-http</artifactId>
-  <version>1.1</version>
-</dependency>
+</dependency>		
 
 # 启动服务
 运行 App.java
