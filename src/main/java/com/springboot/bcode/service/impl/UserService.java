@@ -48,8 +48,8 @@ public class UserService implements IUserService {
 	@Override
 	public String login(LoginVO vo) {
 		validateLoginCodition(vo);
-		String token = AppToken.generateToken();
 		UserInfo userInfo = loginProcess(vo);
+		String token = AppToken.generateToken();
 		userInfo.setToken(token);
 		GlobalUser.setUserInfo(userInfo);
 		return token;
