@@ -9,7 +9,8 @@ springboot-link-admin 提供一个权限认证后端接口解决方案，它基�
 
 ## 前序准备
 
-你需要在本地安装 [>=jdk1.7] 和 [redis]
+你需要在本地安装 [>=jdk1.7]  [redis] [mysql]
+sql: springboot-link-admin\src\main\resources目录下 link-admin.sql
 
 
 
