@@ -5,11 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.link.tool.bean.BeanUtils;
 import com.springboot.bcode.dao.IDepartmentDao;
 import com.springboot.bcode.domain.auth.Department;
 import com.springboot.bcode.service.IDepartmentService;
 import com.springboot.common.exception.AuthException;
+import com.springboot.common.utils.BeanUtils;
 
 @Service
 public class DepartmentService implements IDepartmentService {

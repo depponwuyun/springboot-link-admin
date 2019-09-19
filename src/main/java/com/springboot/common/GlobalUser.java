@@ -3,9 +3,9 @@ package com.springboot.common;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSONObject;
-import com.link.tool.lang.StringUtils;
 import com.springboot.bcode.domain.auth.UserInfo;
 import com.springboot.common.utils.HttpUtils;
+import com.springboot.common.utils.StringUtils;
 import com.springboot.core.redis.RedisUtils;
 
 public class GlobalUser {

@@ -6,8 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.link.tool.bean.BeanUtils;
+
+
 import com.springboot.bcode.domain.auth.Department;
+import com.springboot.common.utils.BeanUtils;
 
 public class DepartmentRecursion {
 

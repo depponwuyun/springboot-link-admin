@@ -17,8 +17,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.alibaba.fastjson.JSONObject;
-import com.link.tool.utils.ServerUtils;
-import com.link.tool.utils.UUIDUtils;
 import com.springboot.bcode.dao.ILogDao;
 import com.springboot.bcode.domain.auth.BLog;
 import com.springboot.bcode.domain.auth.UserInfo;

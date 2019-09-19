@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import com.link.tool.lang.StringUtils;
+import com.springboot.common.utils.StringUtils;
 import com.springboot.core.jdbc.JdbcException;
 import com.springboot.core.jdbc.sql.DynamicSql;
 import com.springboot.core.jdbc.sql.SqlObject;

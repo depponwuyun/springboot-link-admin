@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.link.tool.lang.StringUtils;
 import com.springboot.bcode.dao.IUserDao;
 import com.springboot.bcode.domain.auth.Department;
 import com.springboot.bcode.domain.auth.UserInfo;
 import com.springboot.bcode.domain.auth.UserRole;
+import com.springboot.common.utils.StringUtils;
 import com.springboot.core.algorithm.DepartmentRecursion;
 import com.springboot.core.jdbc.BaseDaoImpl;
 import com.springboot.core.web.mvc.JqGridPage;

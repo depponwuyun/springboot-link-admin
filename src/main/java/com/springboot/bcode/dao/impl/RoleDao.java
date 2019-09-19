@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.link.tool.lang.StringUtils;
 import com.springboot.bcode.dao.IRoleDao;
 import com.springboot.bcode.domain.auth.Role;
 import com.springboot.bcode.domain.auth.RolePermission;
+import com.springboot.common.utils.StringUtils;
 import com.springboot.core.jdbc.BaseDaoImpl;
 import com.springboot.core.web.mvc.JqGridPage;
 

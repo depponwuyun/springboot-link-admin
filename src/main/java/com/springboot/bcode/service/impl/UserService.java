@@ -8,10 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.link.tool.bean.BeanUtils;
-import com.link.tool.lang.StringUtils;
-import com.link.tool.utils.MD5Utils;
-import com.link.tool.utils.UUIDUtils;
 import com.springboot.bcode.dao.IUserDao;
 import com.springboot.bcode.domain.auth.Department;
 import com.springboot.bcode.domain.auth.LoginVO;
@@ -30,6 +26,10 @@ import com.springboot.common.AppToken;
 import com.springboot.common.GlobalUser;
 import com.springboot.common.exception.AuthException;
 import com.springboot.common.exception.SystemException;
+import com.springboot.common.utils.BeanUtils;
+import com.springboot.common.utils.MD5Utils;
+import com.springboot.common.utils.StringUtils;
+import com.springboot.common.utils.UUIDUtils;
 import com.springboot.core.web.mvc.JqGridPage;
 
 @Service

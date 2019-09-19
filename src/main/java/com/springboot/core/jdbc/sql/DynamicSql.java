@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.link.tool.lang.StringUtils;
+import com.springboot.common.utils.StringUtils;
 import com.springboot.core.jdbc.JdbcException;
 import com.springboot.core.jdbc.annotation.Columns;
 import com.springboot.core.jdbc.annotation.Tables;

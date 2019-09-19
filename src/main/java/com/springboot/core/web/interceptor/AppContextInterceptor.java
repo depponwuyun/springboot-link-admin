@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.link.tool.lang.StringUtils;
 import com.springboot.bcode.domain.auth.UserInfo;
 import com.springboot.common.GlobalUser;
+import com.springboot.common.utils.StringUtils;
 
 /**
  * 拦截器，优先执行，验证用户是否登录

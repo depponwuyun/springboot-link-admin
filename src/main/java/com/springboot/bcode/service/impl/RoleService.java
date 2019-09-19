@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.link.tool.bean.BeanUtils;
-import com.link.tool.lang.StringUtils;
 import com.springboot.bcode.dao.IDataScopeDao;
 import com.springboot.bcode.dao.IPermissionDao;
 import com.springboot.bcode.dao.IRoleDao;
@@ -19,6 +17,8 @@ import com.springboot.bcode.domain.auth.RoleDataScopeVO;
 import com.springboot.bcode.domain.auth.RolePermission;
 import com.springboot.bcode.service.IRoleService;
 import com.springboot.common.exception.AuthException;
+import com.springboot.common.utils.BeanUtils;
+import com.springboot.common.utils.StringUtils;
 import com.springboot.core.web.mvc.JqGridPage;
 
 @Service

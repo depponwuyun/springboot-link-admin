@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.link.tool.lang.StringUtils;
 import com.springboot.bcode.dao.ILogDao;
 import com.springboot.bcode.domain.auth.BLog;
+import com.springboot.common.utils.StringUtils;
 import com.springboot.core.jdbc.BaseDaoImpl;
 import com.springboot.core.web.mvc.JqGridPage;
 
