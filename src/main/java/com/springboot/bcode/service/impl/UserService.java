@@ -30,7 +30,6 @@ import com.springboot.common.AppToken;
 import com.springboot.common.GlobalUser;
 import com.springboot.common.exception.AuthException;
 import com.springboot.common.exception.SystemException;
-import com.springboot.core.algorithm.DepartmentRecursion;
 import com.springboot.core.web.mvc.JqGridPage;
 
 @Service
@@ -93,14 +92,6 @@ public class UserService implements IUserService {
 		if (user == null) {
 			throw new AuthException("用户未登录");
 		}
-		// 获取当前用户的所属公司或医院
-		Department company = DepartmentRecursion.findCompany(user.getDeptid());
-		if (company == null) {
-			throw new SystemException("未查询到当前用户的所属公司或医院");
-		}
-		user.setCompanyId(company.getId());
-		user.setCompanyName(company.getName());
-
 		// 获取当前用户的部门
 		Department dept = departmentService.query(user.getDeptid());
 		if (dept == null) {
@@ -187,11 +178,6 @@ public class UserService implements IUserService {
 		JqGridPage<UserInfo> page = userDao.selectPage(user);
 		if (page.getRows() != null && !page.getRows().isEmpty()) {
 			for (UserInfo userInfo : page.getRows()) {
-				Department dept = DepartmentRecursion.findCompany(userInfo
-						.getDeptid());
-				if (dept != null) {
-					userInfo.setCompanyName(dept.getName());
-				}
 				List<Role> roleList = roleService
 						.queryByUser(userInfo.getUid());
 				userInfo.setRoles(roleList);
@@ -243,7 +229,7 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public boolean modify(UserInfoVO vo) throws AuthException {
+	public boolean update(UserInfoVO vo) throws AuthException {
 
 		if (vo.getUid() == null) {
 			throw new AuthException("用户不存在");
@@ -294,7 +280,7 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public boolean remove(String uid) throws AuthException {
+	public boolean delete(String uid) throws AuthException {
 		if (StringUtils.isBlank(uid)) {
 			throw new AuthException("uid不能为空");
 		}

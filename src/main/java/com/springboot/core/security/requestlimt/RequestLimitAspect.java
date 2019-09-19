@@ -30,17 +30,17 @@ import com.springboot.core.redis.RedisUtils;
  * @date 2019年9月11日 上午8:47:52
  *
  */
-@Aspect
+/*@Aspect
 @Component
 @Order(1)
 public class RequestLimitAspect {
 
 	private static final String REQ_LIMIT = "req_limit_";
 
-	/**
+	*//**
 	 * 定义拦截规则：拦截com.link.security.springboot.controller包下面的所有类中，有@RequestLimitAnnotation注解的方法
 	 * 。
-	 */
+	 *//*
 	@Around("execution(* com.springboot.bcode.api..*(..)) "
 			+ "and @annotation(com.springboot.core.security.requestlimt.RequestLimit)")
 	public Object method(ProceedingJoinPoint pjp) throws Throwable {
@@ -92,13 +92,13 @@ public class RequestLimitAspect {
 		return pjp.proceed();
 	}
 
-	/**
+	*//**
 	 * requestLimitKey: url_ip
 	 * 
 	 * @param url
 	 * @param ip
 	 * @return
-	 */
+	 *//*
 	private static String requestLimitKey(String url, String ip) {
 
 		StringBuilder sb = new StringBuilder();
@@ -109,13 +109,13 @@ public class RequestLimitAspect {
 		return sb.toString();
 	}
 
-	/**
+	*//**
 	 * 返回拒绝信息
 	 * 
 	 * @param request
 	 * @return
 	 * @throws IOException
-	 */
+	 *//*
 	private String returnLimit(HttpServletRequest request) throws IOException {
 
 		HttpServletResponse response = ((ServletRequestAttributes) RequestContextHolder
@@ -131,3 +131,4 @@ public class RequestLimitAspect {
 	}
 
 }
+*/

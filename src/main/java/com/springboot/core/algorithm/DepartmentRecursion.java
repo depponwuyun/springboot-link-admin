@@ -8,8 +8,6 @@ import java.util.Set;
 
 import com.link.tool.bean.BeanUtils;
 import com.springboot.bcode.domain.auth.Department;
-import com.springboot.common.LocalCache;
-import com.springboot.common.constant.Constant;
 
 public class DepartmentRecursion {
 
@@ -73,11 +71,10 @@ public class DepartmentRecursion {
 	 * @return List<Department> 返回类型
 	 *
 	 */
-	public static List<Department> findSelfAndAllChild(Integer id) {
+	public static List<Department> findSelfAndAllChild(Integer id,List<Department> allList) {
 		if (id == null) {
 			return null;
 		}
-		List<Department> allList = LocalCache.get(Constant.caceh_all_dept_key);
 		if (allList == null || allList.isEmpty() || id == null) {
 			return null;
 		}
@@ -102,11 +99,10 @@ public class DepartmentRecursion {
 	 * @return List<Department> 返回类型
 	 *
 	 */
-	public static List<Department> findAllChild(Integer id) {
+	public static List<Department> findAllChild(Integer id,List<Department> allList) {
 		if (id == null) {
 			return null;
 		}
-		List<Department> allList = LocalCache.get(Constant.caceh_all_dept_key);
 		if (allList == null || allList.isEmpty() || id == null) {
 			return null;
 		}
@@ -141,8 +137,7 @@ public class DepartmentRecursion {
 	 * @param id
 	 * @return
 	 */
-	public static Department findCompany(Integer id) {
-		List<Department> allList = LocalCache.get(Constant.caceh_all_dept_key);
+	public static Department findCompany(Integer id,List<Department> allList) {
 		if (allList == null || allList.isEmpty() || id == null) {
 			return null;
 		}

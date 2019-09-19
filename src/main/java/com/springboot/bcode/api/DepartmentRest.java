@@ -56,7 +56,7 @@ public class DepartmentRest extends BaseRest {
 	public ResponseResult add(@RequestBody Department dept) {
 		ResponseResult rep = new ResponseResult();
 		try {
-			departmentService.save(dept);
+			departmentService.add(dept);
 		} catch (AuthException e) {
 			rep.setCode(CODE_500);
 			rep.setMsg(e.getMessage());
@@ -80,7 +80,7 @@ public class DepartmentRest extends BaseRest {
 	public ResponseResult update(@RequestBody Department dept) {
 		ResponseResult rep = new ResponseResult();
 		try {
-			departmentService.modify(dept);
+			departmentService.update(dept);
 		} catch (AuthException e) {
 			rep.setCode(CODE_500);
 			rep.setMsg(e.getMessage());
@@ -103,7 +103,7 @@ public class DepartmentRest extends BaseRest {
 	public ResponseResult delete(@RequestParam("id") Integer id) {
 		ResponseResult rep = new ResponseResult();
 		try {
-			departmentService.remove(id);
+			departmentService.delete(id);
 		} catch (AuthException e) {
 			rep.setCode(CODE_500);
 			rep.setMsg(e.getMessage());

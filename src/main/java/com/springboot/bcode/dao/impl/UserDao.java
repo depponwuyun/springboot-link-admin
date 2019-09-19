@@ -159,24 +159,5 @@ public class UserDao extends BaseDaoImpl implements IUserDao {
 		return super.batchInsert(list);
 	}
 
-	@Override
-	public List<UserInfo> selectByDeptBelow(Integer deptId) {
-		List<Department> childList = DepartmentRecursion.findAllChild(deptId);
-		List<Integer> deptIdList = new ArrayList<Integer>();
-		if (childList != null) {
-			for (Department dept : childList) {
-				deptIdList.add(dept.getId());
-			}
-		}
-		deptIdList.add(deptId);
-		StringBuilder sql = new StringBuilder();
-		sql.append("select u.uid,u.name,u.vsername,u.mobile,u.regtime,u.state,u.deptid,d.name as deptName from t_web_user u");
-		// sql.append(" left join t_web_user_role ur on ur.user_id=u.uid");
-		// sql.append(" left join t_web_role r on r.id=ur.role_id");
-		sql.append(" left join t_web_dept d on d.id=u.deptid");
-		sql.append(" where u.deptid in ("
-				+ StringUtils.join(deptIdList.toArray(), ",") + ")");
-		return super.find(sql.toString(), new Object[] {}, UserInfo.class);
-	}
 
 }

@@ -68,7 +68,7 @@ public class PermissionService implements IPermissionService {
 	}
 
 	@Override
-	public boolean save(Permission permission) throws AuthException {
+	public boolean add(Permission permission) throws AuthException {
 		if (permission == null) {
 			throw new AuthException("保存数据不能为空");
 		}
@@ -86,7 +86,7 @@ public class PermissionService implements IPermissionService {
 	}
 
 	@Override
-	public boolean modify(Permission permission) throws AuthException {
+	public boolean update(Permission permission) throws AuthException {
 		Permission permissionInfo = rightDao.select(permission.getId());
 		if (permissionInfo == null) {
 			throw new AuthException("没有对应的权限");

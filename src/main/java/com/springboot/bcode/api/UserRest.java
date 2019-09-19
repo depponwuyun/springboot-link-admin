@@ -26,13 +26,6 @@ public class UserRest extends BaseRest {
 	@Autowired
 	private IUserService userService;
 
-	@RequestMapping(value = "gets")
-	public ResponseResult gets() {
-		ResponseResult rep = new ResponseResult();
-		rep.setResult("hello");
-		return rep;
-	}
-
 	@OpertionBLog(title = "登录")
 	@RequestMapping(value = "login", method = RequestMethod.POST)
 	public ResponseResult login(@RequestBody LoginVO vo) {
@@ -138,7 +131,7 @@ public class UserRest extends BaseRest {
 	public ResponseResult update(@RequestBody UserInfoVO user) {
 		ResponseResult rep = new ResponseResult();
 		try {
-			userService.modify(user);
+			userService.update(user);
 		} catch (AuthException e) {
 			rep.setCode(CODE_500);
 			rep.setMsg(e.getMessage());

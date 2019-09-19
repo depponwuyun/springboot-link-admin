@@ -4,7 +4,6 @@ import com.springboot.bcode.domain.auth.LoginVO;
 import com.springboot.bcode.domain.auth.ModifyPwdVO;
 import com.springboot.bcode.domain.auth.UserInfo;
 import com.springboot.bcode.domain.auth.UserInfoVO;
-import com.springboot.common.exception.AuthException;
 import com.springboot.core.web.mvc.JqGridPage;
 
 public interface IUserService {
@@ -21,13 +20,10 @@ public interface IUserService {
 
 	void modifyPwd(ModifyPwdVO vo);
 
-	boolean add(UserInfoVO user) throws AuthException;
-	
+	boolean add(UserInfoVO user);
 
-	boolean modify(UserInfoVO user) throws AuthException;
+	boolean update(UserInfoVO user);
 
-	boolean remove(String uid) throws AuthException;
-
-
+	boolean delete(String uid);
 
 }

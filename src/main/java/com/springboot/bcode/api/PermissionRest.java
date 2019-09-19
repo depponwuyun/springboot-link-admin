@@ -68,7 +68,7 @@ public class PermissionRest extends BaseRest {
 	public ResponseResult add(@RequestBody Permission permission) {
 		ResponseResult rep = new ResponseResult();
 		try {
-			rightService.save(permission);
+			rightService.add(permission);
 		} catch (AuthException e) {
 			rep.setCode(CODE_500);
 			rep.setMsg(e.getMessage());
@@ -86,7 +86,7 @@ public class PermissionRest extends BaseRest {
 	public ResponseResult update(@RequestBody Permission right) {
 		ResponseResult rep = new ResponseResult();
 		try {
-			rightService.modify(right);
+			rightService.update(right);
 		} catch (AuthException e) {
 			rep.setCode(CODE_500);
 			rep.setMsg(e.getMessage());

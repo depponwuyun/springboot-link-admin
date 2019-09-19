@@ -17,9 +17,9 @@ public interface IPermissionService {
 
 	Permission query(Integer code) throws AuthException;
 
-	boolean save(Permission right) throws AuthException;
+	boolean add(Permission right) throws AuthException;
 
-	boolean modify(Permission right) throws AuthException;
+	boolean update(Permission right) throws AuthException;
 
 	boolean delete(Integer code) throws AuthException;
 

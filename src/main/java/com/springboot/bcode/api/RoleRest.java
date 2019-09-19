@@ -24,11 +24,6 @@ public class RoleRest extends BaseRest {
 	@Autowired
 	private IRoleService roleService;
 
-	@RequestMapping("manager")
-	public String manager() {
-		return "auth/role_manager";
-	}
-
 	@RequestMapping(value = "list", method = RequestMethod.POST)
 	public ResponseResult list(@RequestBody Role role) {
 		ResponseResult rep = new ResponseResult();
@@ -105,6 +100,29 @@ public class RoleRest extends BaseRest {
 	}
 
 	/**
+	 * 移除角色
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@Requestauthorize
+	@OpertionBLog(title = "删除角色")
+	@RequestMapping(value = "delete")
+	public ResponseResult delete(@RequestParam("id") Integer id) {
+		ResponseResult rep = new ResponseResult();
+		try {
+			roleService.delete(id);
+		} catch (AuthException e) {
+			rep.setCode(CODE_500);
+			rep.setMsg(e.getMessage());
+		} catch (Exception e) {
+			rep.setCode(CODE_500);
+			rep.setMsg("系统异常.请稍后再试");
+		}
+		return rep;
+	}
+
+	/**
 	 * 分配角色对应的数据权限
 	 * 
 	 * @param roleRelationRightVO
@@ -125,29 +143,6 @@ public class RoleRest extends BaseRest {
 			rep.setMsg("系统异常.请稍后再试");
 		}
 
-		return rep;
-	}
-
-	/**
-	 * 移除角色
-	 * 
-	 * @param id
-	 * @return
-	 */
-	@Requestauthorize
-	@OpertionBLog(title = "删除角色")
-	@RequestMapping(value = "delete")
-	public ResponseResult delete(@RequestParam("id") Integer id) {
-		ResponseResult rep = new ResponseResult();
-		try {
-			roleService.delete(id);
-		} catch (AuthException e) {
-			rep.setCode(CODE_500);
-			rep.setMsg(e.getMessage());
-		} catch (Exception e) {
-			rep.setCode(CODE_500);
-			rep.setMsg("系统异常.请稍后再试");
-		}
 		return rep;
 	}
 
