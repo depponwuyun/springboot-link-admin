@@ -17,7 +17,8 @@ public class LogDao extends BaseDaoImpl implements ILogDao {
 
 	@Override
 	public JqGridPage<BLog> selectPage(BLog log) {
-		int startResult = (log.getPage() - 1) * log.getLimit()+ 1;;
+		int startResult = (log.getPage() - 1) * log.getLimit() + 1;
+		;
 		int endResule = (log.getPage() * log.getLimit());
 
 		StringBuilder sql = new StringBuilder();
@@ -54,8 +55,8 @@ public class LogDao extends BaseDaoImpl implements ILogDao {
 		newsql.append(")a )b where rownumber between " + startResult + " and "
 				+ endResule);
 
-		List<BLog> list = super.find(newsql.toString(), null, BLog.class);
-		List<BLog> count = super.find(sql.toString(), null, BLog.class);
+		List<BLog> list = super.select(newsql.toString(), BLog.class);
+		List<BLog> count = super.select(sql.toString(), BLog.class);
 		JqGridPage<BLog> page = new JqGridPage<BLog>(list, count.isEmpty() ? 0
 				: count.size(), log.getLimit(), log.getPage());
 		return page;
@@ -77,10 +78,10 @@ public class LogDao extends BaseDaoImpl implements ILogDao {
 			sql.append(" and loginuser = '").append(b.getLoginuser())
 					.append("'");
 		}
-		List<BLog> list = super.find(sql.toString(), null, BLog.class);
+		List<BLog> list = super.select(sql.toString(), BLog.class);
 		if (list.size() > 0 && list != null) {
 			String obj = list.get(0).getId();
-			BLog b1 = super.findById(Integer.parseInt(obj), BLog.class);
+			BLog b1 = super.selectById(Integer.parseInt(obj), BLog.class);
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			b1.setTcsj(sdf.format(new Date()));
 			return super.update(b1);

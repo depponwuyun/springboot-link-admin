@@ -11,7 +11,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -24,15 +23,15 @@ public abstract class AbstractJdbcSupport implements IObjectOperation,
 		ISqlOperation {
 	protected abstract JdbcTemplate getJdbcTemplate();
 
+	// ---------------------------------object---------------------------------
 	@Override
-	public <T> T findById(Object id, Class<T> tClass) {
-
+	public <T> T selectById(Object id, Class<T> tClass) {
 		if (id == null) {
-			throw new JdbcException("findById id is null");
+			throw new JdbcException("selectById id is null");
 		}
 		SqlObject sqlField = DynamicSql.findByIdSql(id, tClass);
 		if (sqlField == null) {
-			throw new JdbcException("findById SqlField is null");
+			throw new JdbcException("selectById SqlField is null");
 		}
 
 		List<T> list = getJdbcTemplate().query(sqlField.sql,
@@ -47,13 +46,13 @@ public abstract class AbstractJdbcSupport implements IObjectOperation,
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T findOne(T entity) {
+	public <T> T selectOne(T entity) {
 		if (entity == null) {
-			throw new JdbcException("find entity is null");
+			throw new JdbcException("selectOne entity is null");
 		}
 		SqlObject sqlField = DynamicSql.findSql(entity);
 		if (sqlField == null) {
-			throw new JdbcException("find SqlField is null");
+			throw new JdbcException("selectOne SqlField is null");
 		}
 		List<T> list = getJdbcTemplate().query(sqlField.sql,
 				sqlField.params.toArray(),
@@ -66,50 +65,25 @@ public abstract class AbstractJdbcSupport implements IObjectOperation,
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> List<T> find(T entity) {
+	public <T> List<T> select(T entity) {
 		if (entity == null) {
-			throw new JdbcException("find entity is null");
+			throw new JdbcException("select entity is null");
 		}
 		SqlObject sqlField = DynamicSql.findSql(entity);
 		if (sqlField == null) {
-			throw new JdbcException("find SqlField is null");
+			throw new JdbcException("select SqlField is null");
 		}
 		return getJdbcTemplate().query(sqlField.sql, sqlField.params.toArray(),
 				new BeanPropertyRowMapper<T>((Class<T>) entity.getClass()));
 	}
 
-	public <T> List<T> find(String sql, Object[] params, RowMapper<T> mapper) {
-		List<T> resultList = null;
-		try {
-			if (params != null && params.length > 0)
-				resultList = getJdbcTemplate().query(sql, params, mapper);
-			else
-				resultList = getJdbcTemplate().query(sql, mapper);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return resultList;
-	}
-
-	public <T> List<T> find(String sql, Object[] params, Class<T> tClass) {
-		List<T> resultList = null;
-		try {
-			if (params != null && params.length > 0)
-				resultList = getJdbcTemplate().query(sql, params,
-						new BeanPropertyRowMapper<T>(tClass));
-			else
-				// BeanPropertyRowMapper是自动映射实体类的
-				resultList = getJdbcTemplate().query(sql,
-						new BeanPropertyRowMapper<T>(tClass));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return resultList;
-	}
-
-	public <T> T findOne(String sql, Class<T> tClass) {
-		return getJdbcTemplate().queryForObject(sql, tClass);
-	}
+	/*
+	 * @Override public <T> List<T> select(String sql, Object[] params,
+	 * RowMapper<T> mapper) { List<T> resultList = null; try { if (params !=
+	 * null && params.length > 0) resultList = getJdbcTemplate().query(sql,
+	 * params, mapper); else resultList = getJdbcTemplate().query(sql, mapper);
+	 * } catch (Exception e) { e.printStackTrace(); } return resultList; }
+	 */
 
 	@Override
 	public <T> int insert(T entity) {
@@ -254,6 +228,34 @@ public abstract class AbstractJdbcSupport implements IObjectOperation,
 		}
 		row = getJdbcTemplate().batchUpdate(sql, batchArgs);
 		return row;
+	}
+
+	// ---------------------------------sql---------------------------------
+	@Override
+	public <T> List<T> select(String sql, Class<T> tClass) {
+		return select(sql, null, tClass);
+	}
+
+	@Override
+	public <T> List<T> select(String sql, Object[] params, Class<T> tClass) {
+		List<T> resultList = null;
+		try {
+			if (params != null && params.length > 0)
+				resultList = getJdbcTemplate().query(sql, params,
+						new BeanPropertyRowMapper<T>(tClass));
+			else
+				// BeanPropertyRowMapper是自动映射实体类的
+				resultList = getJdbcTemplate().query(sql,
+						new BeanPropertyRowMapper<T>(tClass));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return resultList;
+	}
+
+	@Override
+	public <T> T selectOne(String sql, Class<T> tClass) {
+		return getJdbcTemplate().queryForObject(sql, tClass);
 	}
 
 	@Override

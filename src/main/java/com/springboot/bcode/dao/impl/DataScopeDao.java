@@ -23,13 +23,13 @@ public class DataScopeDao extends BaseDaoImpl implements IDataScopeDao {
 
 	@Override
 	public List<DataScope> select(DataScope dataScope) {
-		return super.find(dataScope);
+		return super.select(dataScope);
 	}
 
 	@Override
 	public List<DataScope> selectRole(Integer roleId) {
 		String sql = "SELECT id,role_id as roleId, targetCategory ,targetId,targetName,targetUrl,permissionId  from t_web_datascope where role_id='"
 				+ roleId + "'";
-		return super.find(sql, new Object[] {}, DataScope.class);
+		return super.select(sql, DataScope.class);
 	}
 }

@@ -1,16 +1,13 @@
 package com.springboot.bcode.dao.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
 import com.springboot.bcode.dao.IUserDao;
-import com.springboot.bcode.domain.auth.Department;
 import com.springboot.bcode.domain.auth.UserInfo;
 import com.springboot.bcode.domain.auth.UserRole;
 import com.springboot.common.utils.StringUtils;
-import com.springboot.core.algorithm.DepartmentRecursion;
 import com.springboot.core.jdbc.BaseDaoImpl;
 import com.springboot.core.web.mvc.JqGridPage;
 
@@ -19,7 +16,7 @@ public class UserDao extends BaseDaoImpl implements IUserDao {
 
 	@Override
 	public JqGridPage<UserInfo> selectPage(UserInfo user) {
-		List<UserInfo> list = super.find(
+		List<UserInfo> list = super.select(
 				getSqlPageHandle().handlerPagingSQL(userPageSql(user, 0),
 						user.getPage(), user.getLimit()), null, UserInfo.class);
 		int count = super.jdbcTemplate.queryForObject(userPageSql(user, 1),
@@ -73,7 +70,7 @@ public class UserDao extends BaseDaoImpl implements IUserDao {
 
 	@Override
 	public UserInfo find(UserInfo user) {
-		List<UserInfo> userList = super.find(user);
+		List<UserInfo> userList = super.select(user);
 		if (userList == null || userList.isEmpty()) {
 			return null;
 		}
@@ -82,34 +79,8 @@ public class UserDao extends BaseDaoImpl implements IUserDao {
 
 	@Override
 	public List<UserInfo> findList(UserInfo user) {
-		return super.find(user);
+		return super.select(user);
 	}
-
-	/**
-	 * 查询用户拥有角色对应的权限
-	 */
-	/*
-	 * @Override public List<UserAndRight11>
-	 * selectRoleMappingRightByUserId(String sysCode, long userId) {
-	 * StringBuilder sql = new StringBuilder(); sql.append(
-	 * "SELECT rr.right_code from t_user_role ur INNER JOIN t_role_right rr on ur.role_code=rr.role_code "
-	 * ); sql.append(
-	 * "inner join t_right r on rr.right_code=r.code where  ur.user_id=? and r.system_code=?"
-	 * );
-	 * 
-	 * return super.find(sql.toString(), new Object[] { userId, sysCode }, new
-	 * UserAndRoleAndRightRowMapper()); }
-	 */
-
-	/*
-	 * public class UserAndRoleAndRightRowMapper implements
-	 * RowMapper<UserAndRight11> { public UserAndRight11 mapRow(ResultSet rs,
-	 * int rowNum) throws SQLException { UserAndRight11 ur = new
-	 * UserAndRight11(); ur.setRightCode(rs.getString("right_code")); return ur;
-	 * }
-	 * 
-	 * }
-	 */
 
 	@Override
 	public int insert(UserInfo user) {
@@ -142,7 +113,8 @@ public class UserDao extends BaseDaoImpl implements IUserDao {
 		// sql.append(" left join t_web_role r on r.id=ur.role_id");
 		sql.append(" left join t_web_dept d on d.id=u.deptid");
 		sql.append(" where u.uid='" + id + "'");
-		List<UserInfo> list = super.find(sql.toString(), null, UserInfo.class);
+		List<UserInfo> list = super
+				.select(sql.toString(), null, UserInfo.class);
 		if (list != null && !list.isEmpty()) {
 			return list.get(0);
 		}
@@ -158,6 +130,5 @@ public class UserDao extends BaseDaoImpl implements IUserDao {
 	public int[] insert(List<UserRole> list) {
 		return super.batchInsert(list);
 	}
-
 
 }

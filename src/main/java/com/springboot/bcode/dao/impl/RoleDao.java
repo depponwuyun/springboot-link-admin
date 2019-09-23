@@ -15,7 +15,7 @@ import com.springboot.core.web.mvc.JqGridPage;
 public class RoleDao extends BaseDaoImpl implements IRoleDao {
 	@Override
 	public JqGridPage<Role> selectPage(Role role) {
-		List<Role> list = super.find(
+		List<Role> list = super.select(
 				getSqlPageHandle().handlerPagingSQL(rolePageSql(role, 0),
 						role.getPage(), role.getLimit()), null, Role.class);
 		int count = super.jdbcTemplate.queryForObject(rolePageSql(role, 1),
@@ -60,22 +60,25 @@ public class RoleDao extends BaseDaoImpl implements IRoleDao {
 		sql.append("SELECT r.id,r.name from t_web_user_role ur INNER JOIN t_web_role r on ur.role_id=r.id ");
 		sql.append(" where  ur.user_id=? ");
 
-		return super.find(sql.toString(), new Object[] { userId }, Role.class);
+		return super
+				.select(sql.toString(), new Object[] { userId }, Role.class);
 	}
 
 	@Override
 	public List<Role> select(Role role) {
-		return super.find(role);
+		return super.select(role);
 	}
 
 	@Override
 	public int insert(Role role) {
 		return super.insert(role);
 	}
+
 	@Override
-	public int insertRetrunId(Role role){
+	public int insertRetrunId(Role role) {
 		return super.insertReturnAutoIncrement(role);
 	}
+
 	@Override
 	public int update(Role role) {
 		return super.update(role);
@@ -98,7 +101,7 @@ public class RoleDao extends BaseDaoImpl implements IRoleDao {
 
 	@Override
 	public Role select(Integer id) {
-		return super.findById(id, Role.class);
+		return super.selectById(id, Role.class);
 	}
 
 }

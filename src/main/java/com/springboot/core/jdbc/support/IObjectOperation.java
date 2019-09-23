@@ -71,7 +71,7 @@ public interface IObjectOperation {
 	 * @return T 返回单个对象
 	 *
 	 */
-	<T> T findById(Object id, Class<T> tClass);
+	<T> T selectById(Object id, Class<T> tClass);
 
 	/**
 	 * 
@@ -83,7 +83,7 @@ public interface IObjectOperation {
 	 * @return List<T> 返回结果集
 	 *
 	 */
-	<T> List<T> find(T entity);
+	<T> List<T> select(T entity);
 
 	/**
 	 * 
@@ -96,6 +96,6 @@ public interface IObjectOperation {
 	 * @return T 返回单个对象
 	 *
 	 */
-	<T> T findOne(T entity);
+	<T> T selectOne(T entity);
 
 }
