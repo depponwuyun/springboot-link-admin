@@ -1,41 +1,38 @@
 package com.springboot.bcode.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.springboot.bcode.domain.auth.BLog;
+import com.springboot.bcode.domain.logs.BLogVO;
 import com.springboot.bcode.service.ILogService;
 import com.springboot.common.exception.AuthException;
-import com.springboot.core.logger.LoggerUtil;
-import com.springboot.core.web.mvc.JqGridPage;
+import com.springboot.core.security.authorize.Requestauthorize;
+import com.springboot.core.web.mvc.BaseRest;
+import com.springboot.core.web.mvc.ResponseResult;
 
-@Controller
-@RequestMapping(value = "/log")
-public class LogRest {
+@RestController
+@RequestMapping(value = "/rest/logs")
+public class LogRest extends BaseRest {
 	@Autowired
 	private ILogService logService;
 
-	@RequestMapping(value = "manager")
-	public String getLoglist() {
-		return "auth/blog";
-	}
-
-	@RequestMapping(value = "list", method = RequestMethod.POST)
-	@ResponseBody
-	public JqGridPage<BLog> list(BLog log) {
-		JqGridPage<BLog> page = null;
+	@Requestauthorize
+	@RequestMapping(value = "/blog/list", method = RequestMethod.POST)
+	public ResponseResult list(@RequestBody BLogVO vo) {
+		ResponseResult rep = new ResponseResult();
 		try {
-			page = logService.queryPage(log);
+			rep.setResult(logService.queryPage(vo));
 		} catch (AuthException e) {
-			LoggerUtil.error(e.getMessage());
+			rep.setCode(CODE_500);
+			rep.setMsg(e.getMessage());
 		} catch (Exception e) {
-			LoggerUtil.error(e.getMessage());
+			rep.setCode(CODE_500);
+			rep.setMsg("系统异常.请稍后再试");
 		}
-		return page;
+		return rep;
 
 	}
-
 }

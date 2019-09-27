@@ -1,24 +1,19 @@
-package com.springboot.bcode.domain.auth;
+package com.springboot.bcode.domain.logs;
 
-import java.sql.Date;
+import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.springboot.core.jdbc.annotation.Columns;
 import com.springboot.core.jdbc.annotation.Tables;
-import com.springboot.core.web.mvc.JqGridParam;
 
 @Tables(table = "t_web_logs")
-public class BLog extends JqGridParam {
-	@Columns(column = "id", primaryKey = true, autoIncrement = false)
+public class BLog {
+	@Columns(column = "id", primaryKey = true)
 	private String id;
 	@Columns(column = "loginuser")
 	private String loginuser;
 	@Columns(column = "vsername")
 	private String vsername;
-	@Columns(column = "hisname")
-	private String hisname;
-	@Columns(column = "ksname")
-	private String ksname;
+
 	@Columns(column = "title")
 	private String title;
 	@Columns(column = "url")
@@ -32,21 +27,11 @@ public class BLog extends JqGridParam {
 	@Columns(column = "ip")
 	private String ip;
 	@Columns(column = "cratetime")
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	private java.sql.Timestamp cratetime;
+	private Date cratetime;
 	@Columns(column = "duration")
 	private Long duration;// 持续时间
-	@Columns(column = "tcsj")
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-	private String tcsj;
-	private Date starttime;
-	private Date endtime;
 
 	private Long timestamp;// Span创建时的时间戳，使用的单位是微秒（而不是毫秒），所有时间戳都有错误，包括主机之间的时钟偏差以及时间服务重新设置时钟的可能性，
-	// 客户端ip
-	private String clientIp;
-	// 服务器ip
-	private String serverIp;
 	// 结果
 	private Object result;
 
@@ -74,22 +59,6 @@ public class BLog extends JqGridParam {
 		this.vsername = vsername;
 	}
 
-	public String getHisname() {
-		return hisname;
-	}
-
-	public void setHisname(String hisname) {
-		this.hisname = hisname;
-	}
-
-	public String getKsname() {
-		return ksname;
-	}
-
-	public void setKsname(String ksname) {
-		this.ksname = ksname;
-	}
-
 	public String getTitle() {
 		return title;
 	}
@@ -112,38 +81,6 @@ public class BLog extends JqGridParam {
 
 	public void setIp(String ip) {
 		this.ip = ip;
-	}
-
-	public java.sql.Timestamp getCratetime() {
-		return cratetime;
-	}
-
-	public void setCratetime(java.sql.Timestamp cratetime) {
-		this.cratetime = cratetime;
-	}
-
-	public Date getStarttime() {
-		return starttime;
-	}
-
-	public void setStarttime(Date starttime) {
-		this.starttime = starttime;
-	}
-
-	public Date getEndtime() {
-		return endtime;
-	}
-
-	public void setEndtime(Date endtime) {
-		this.endtime = endtime;
-	}
-
-	public String getTcsj() {
-		return tcsj;
-	}
-
-	public void setTcsj(String tcsj) {
-		this.tcsj = tcsj;
 	}
 
 	public String getRequestmethod() {
@@ -186,28 +123,20 @@ public class BLog extends JqGridParam {
 		this.timestamp = timestamp;
 	}
 
-	public String getClientIp() {
-		return clientIp;
-	}
-
-	public void setClientIp(String clientIp) {
-		this.clientIp = clientIp;
-	}
-
-	public String getServerIp() {
-		return serverIp;
-	}
-
-	public void setServerIp(String serverIp) {
-		this.serverIp = serverIp;
-	}
-
 	public Object getResult() {
 		return result;
 	}
 
 	public void setResult(Object result) {
 		this.result = result;
+	}
+
+	public Date getCratetime() {
+		return cratetime;
+	}
+
+	public void setCratetime(Date cratetime) {
+		this.cratetime = cratetime;
 	}
 
 }

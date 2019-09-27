@@ -1,13 +1,12 @@
 package com.springboot.bcode.dao.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
 import com.springboot.bcode.dao.ILogDao;
-import com.springboot.bcode.domain.auth.BLog;
+import com.springboot.bcode.domain.logs.BLog;
+import com.springboot.bcode.domain.logs.BLogVO;
 import com.springboot.common.utils.StringUtils;
 import com.springboot.core.jdbc.BaseDaoImpl;
 import com.springboot.core.web.mvc.JqGridPage;
@@ -16,77 +15,44 @@ import com.springboot.core.web.mvc.JqGridPage;
 public class LogDao extends BaseDaoImpl implements ILogDao {
 
 	@Override
-	public JqGridPage<BLog> selectPage(BLog log) {
-		int startResult = (log.getPage() - 1) * log.getLimit() + 1;
-		;
-		int endResule = (log.getPage() * log.getLimit());
+	public JqGridPage<BLog> selectPage(BLogVO log) {
 
+		List<BLog> list = super.select(
+				getSqlPageHandle().handlerPagingSQL(logPageSql(log, 0),
+						log.getPage(), log.getLimit()), null, BLog.class);
+		int count = super.jdbcTemplate.queryForObject(logPageSql(log, 1), null,
+				Integer.class);
+		JqGridPage<BLog> page = new JqGridPage<BLog>(list, count,
+				log.getLimit(), log.getPage());
+		return page;
+	}
+
+	private String logPageSql(BLogVO log, int type) {
 		StringBuilder sql = new StringBuilder();
-		StringBuilder sqlOrderBy = new StringBuilder();
-		sql.append("select * from t_web_logs");
-		sql.append("  where 1=1");
-		if (log.getStarttime() != null && !"".equals(log.getStarttime())) {
-			sql.append(" and cratetime >='").append(
-					log.getStarttime() + " 00:00:00' ");
+		if (type == 0) {
+			sql.append("select  * from t_web_logs");
+		} else {
+			sql.append("select count(*) from t_web_logs ");
 		}
-		if (log.getEndtime() != null && !"".equals(log.getEndtime())) {
-			sql.append(" and cratetime <='").append(
-					log.getEndtime() + " 23:59:59' ");
-		}
-		if (log.getLoginuser() != null && !"".equals(log.getLoginuser())) {
+		sql.append(" where 1=1");
+
+		sql.append(" and cratetime >='" + log.getStarttime() + "'");
+
+		sql.append(" and cratetime <='" + log.getEndtime() + "'");
+
+		if (StringUtils.isNotBlank(log.getLoginuser())) {
 			sql.append(" and loginuser like '%").append(
 					log.getLoginuser().trim() + "%' ");
 		}
-		if (StringUtils.isNotBlank(log.getSidx())) {
-			if ((log.getSord().trim().equalsIgnoreCase("asc"))) {
-				sqlOrderBy.append(" order by " + log.getSidx().split(" ")[0]
-						+ " asc");
-			} else {
-				sqlOrderBy.append(" order by " + log.getSidx().split(" ")[0]
-						+ " desc");
-			}
-		} else {
-			sqlOrderBy.append(" order by cratetime  desc");
+		if (type == 0) {
+			sql.append(" order by cratetime desc");
 		}
-		StringBuffer newsql = new StringBuffer();
-		newsql.append("select * from(select row_number() over (" + sqlOrderBy
-				+ ") rownumber,* from( ");
-		newsql.append(sql);
-		newsql.append(")a )b where rownumber between " + startResult + " and "
-				+ endResule);
-
-		List<BLog> list = super.select(newsql.toString(), BLog.class);
-		List<BLog> count = super.select(sql.toString(), BLog.class);
-		JqGridPage<BLog> page = new JqGridPage<BLog>(list, count.isEmpty() ? 0
-				: count.size(), log.getLimit(), log.getPage());
-		return page;
+		return sql.toString();
 	}
 
 	@Override
 	public int insert(BLog log) {
 		return super.insert(log);
-	}
-
-	public int update(BLog b) {
-		StringBuffer sql = new StringBuffer();
-		sql.append(" select max(id) as id from t_web_logs ");
-		sql.append(" where 1=1 ");
-		if (b.getIp() != null && !"".equals(b.getIp())) {
-			sql.append(" and ip = '").append(b.getIp()).append("'");
-		}
-		if (b.getLoginuser() != null && !"".equals(b.getLoginuser())) {
-			sql.append(" and loginuser = '").append(b.getLoginuser())
-					.append("'");
-		}
-		List<BLog> list = super.select(sql.toString(), BLog.class);
-		if (list.size() > 0 && list != null) {
-			String obj = list.get(0).getId();
-			BLog b1 = super.selectById(Integer.parseInt(obj), BLog.class);
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			b1.setTcsj(sdf.format(new Date()));
-			return super.update(b1);
-		}
-		return 0;
 	}
 
 }

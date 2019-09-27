@@ -1,13 +1,13 @@
 package com.springboot.bcode.dao;
 
-import com.springboot.bcode.domain.auth.BLog;
+import com.springboot.bcode.domain.logs.BLog;
+import com.springboot.bcode.domain.logs.BLogVO;
 import com.springboot.core.web.mvc.JqGridPage;
 
 public interface ILogDao {
 
-	JqGridPage<BLog> selectPage(BLog log);
+	JqGridPage<BLog> selectPage(BLogVO  log);
 
 	int insert(BLog log);
 
-	public int update(BLog b);
 }

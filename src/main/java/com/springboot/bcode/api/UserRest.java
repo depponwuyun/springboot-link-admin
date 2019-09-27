@@ -49,6 +49,7 @@ public class UserRest extends BaseRest {
 	 * @return ResponseResult 返回类型
 	 *
 	 */
+	@OpertionBLog(title = "用户信息")
 	@RequestMapping(value = "info")
 	public ResponseResult info() {
 		ResponseResult rep = new ResponseResult();
@@ -77,6 +78,7 @@ public class UserRest extends BaseRest {
 		return rep;
 	}
 
+	@OpertionBLog(title = "用户列表")
 	@Requestauthorize
 	@RequestMapping(value = "list", method = RequestMethod.POST)
 	public ResponseResult list(@RequestBody UserInfo user) {
@@ -92,9 +94,9 @@ public class UserRest extends BaseRest {
 
 	}
 
+	@OpertionBLog(title = "添加用户")
 	@Requestauthorize
 	@RequestMapping(value = "add", method = RequestMethod.POST)
-	@OpertionBLog(title = "添加用户")
 	public ResponseResult add(@RequestBody UserInfoVO user) {
 		ResponseResult rep = new ResponseResult();
 		try {
@@ -109,25 +111,9 @@ public class UserRest extends BaseRest {
 		return rep;
 	}
 
-	@RequestMapping(value = "queryById", method = RequestMethod.POST)
-	public ResponseResult queryById(String uid) {
-		ResponseResult rep = new ResponseResult();
-		try {
-			UserInfo user = userService.find(uid);
-			rep.setResult(user);
-		} catch (AuthException e) {
-			rep.setCode(CODE_500);
-			rep.setMsg(e.getMessage());
-		} catch (Exception e) {
-			rep.setCode(CODE_500);
-			rep.setMsg("查询异常.请稍后再试");
-		}
-		return rep;
-	}
-
+	@OpertionBLog(title = "修改用户")
 	@Requestauthorize
 	@RequestMapping(value = "update", method = RequestMethod.POST)
-	@OpertionBLog(title = "修改用户")
 	public ResponseResult update(@RequestBody UserInfoVO user) {
 		ResponseResult rep = new ResponseResult();
 		try {
@@ -142,8 +128,8 @@ public class UserRest extends BaseRest {
 		return rep;
 	}
 
-	@RequestMapping(value = "modifyPwd", method = RequestMethod.POST)
 	@OpertionBLog(title = "修改密码")
+	@RequestMapping(value = "modifyPwd", method = RequestMethod.POST)
 	public ResponseResult modifyPwd(@RequestBody ModifyPwdVO vo) {
 		ResponseResult rep = new ResponseResult();
 		try {

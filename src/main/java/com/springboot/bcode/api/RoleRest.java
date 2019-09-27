@@ -24,6 +24,7 @@ public class RoleRest extends BaseRest {
 	@Autowired
 	private IRoleService roleService;
 
+	@OpertionBLog(title = "角色列表")
 	@RequestMapping(value = "list", method = RequestMethod.POST)
 	public ResponseResult list(@RequestBody Role role) {
 		ResponseResult rep = new ResponseResult();

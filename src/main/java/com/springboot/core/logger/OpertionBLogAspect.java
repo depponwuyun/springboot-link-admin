@@ -1,6 +1,7 @@
 package com.springboot.core.logger;
 
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -13,14 +14,13 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.alibaba.fastjson.JSONObject;
 import com.springboot.bcode.dao.ILogDao;
-import com.springboot.bcode.domain.auth.BLog;
 import com.springboot.bcode.domain.auth.UserInfo;
+import com.springboot.bcode.domain.logs.BLog;
 import com.springboot.common.GlobalUser;
+import com.springboot.common.utils.HttpUtils;
+import com.springboot.common.utils.IPUtils;
 
 /**
  * 日志记录aop,目前已经优化为线程池加异步写入业务日志
@@ -28,7 +28,7 @@ import com.springboot.common.GlobalUser;
  * @author Administrator
  *
  */
-/*@Order(7)
+@Order(7)
 @Aspect
 @Component
 public class OpertionBLogAspect {
@@ -37,92 +37,54 @@ public class OpertionBLogAspect {
 	@Autowired
 	private ILogDao logDao;
 
-	*//**
-	 * 定义拦截规则：拦截com.springboot.bcode.controller包下面的所有类中，有@OpertionBLog注解的方法 。 +
-	 * "and @annotation(com.springboot.core.logger.OpertionBLog)"
-	 *//*
-	@Around("execution(* com.springboot.bcode.controller..*(..))")
+	@Around("execution(* com.springboot.bcode.api..*(..)) "
+			+ "and @annotation(com.springboot.core.logger.OpertionBLog)")
 	public Object method(ProceedingJoinPoint pjp) throws Throwable {
 
-		UserInfo app = GlobalUser.getUserInfo();
 		BLog log = new BLog();
-		ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder
-				.getRequestAttributes();
-		HttpServletRequest request = requestAttributes.getRequest();
-		try {
-			// 先通过注解判断
-			MethodSignature signature = (MethodSignature) pjp.getSignature();
-			Method method = signature.getMethod(); // 获取被拦截的方法
-			OpertionBLog opertionBLog = method
-					.getAnnotation(OpertionBLog.class);
-			if (opertionBLog == null) {
-	
-			} else {
-				log.setTitle(opertionBLog.title());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 		log.setTimestamp(System.currentTimeMillis());
-		log.setCratetime(new java.sql.Timestamp(new java.util.Date().getTime()));
+		log.setCratetime(new Date());
 
+		// 先通过注解判断
+		MethodSignature signature = (MethodSignature) pjp.getSignature();
+		Method method = signature.getMethod(); // 获取被拦截的方法
+		OpertionBLog opertionBLog = method.getAnnotation(OpertionBLog.class);
 		// 方法执行后记录日志
 		Object result = pjp.proceed();
+
+		if (opertionBLog == null) {
+			return result;
+		}
 		try {
-			crateBLog(log, pjp, request);
+			crateBLog(log, pjp);
+			log.setTitle(opertionBLog.title());
 			log.setDuration(System.currentTimeMillis() - log.getTimestamp());
 			log.setResult(result);
+			// 将有OpertionBLog标记的日志记录到数据库
+			pool.execute(new WBLog(log));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// 将有OpertionBLog标记的日志记录到数据库
-		//pool.execute(new WBLog(log));
 
 		return result;
 	}
 
-	
-
-
-
-	private void crateBLog(BLog log, ProceedingJoinPoint pjp,
-			HttpServletRequest request) {
-		log.setId(UUIDUtils.generateUUID());
-
+	private void crateBLog(BLog log, ProceedingJoinPoint pjp) {
+		HttpServletRequest request = HttpUtils.getRequest();
 		log.setUrl(request.getRequestURL().toString());
-		log.setClientIp(IPUtils.getIpAddr(request));
-		log.setServerIp(ServerUtils.getHostAddress());
 		log.setIp(IPUtils.getIpAddr(request));
 
 		String requestmethod = request.getMethod();
 		String contentType = request.getContentType();
-		Object[] args = pjp.getArgs();
-
 		log.setRequestmethod(requestmethod);
 		log.setContentType(contentType);
-		log.setRequestparams(getRequestParams(request, args));
 
-	}
-
-	private Object getRequestParams(HttpServletRequest request, Object[] args) {
-		StringBuilder sb = new StringBuilder();
-		if ("POST".equalsIgnoreCase(request.getMethod())) {
-			if (request.getContentType() != null) {
-				if (request.getContentType().indexOf("json") > -1) {
-					for (Object object : args) {
-						sb.append(JSONObject.toJSONString(object));
-					}
-				} else {
-					for (Object object : args) {
-						sb.append(object);
-					}
-				}
-			}
-		} else {
-			sb.append(request.getQueryString());
+		UserInfo user = GlobalUser.getUserInfo();
+		if (user != null) {
+			log.setLoginuser(user.getName());
+			log.setVsername(user.getVserName());
 		}
-		return sb.toString();
+
 	}
 
 	class WBLog implements Runnable {
@@ -144,4 +106,4 @@ public class OpertionBLogAspect {
 		}
 	}
 
-}*/
+}
