@@ -6,17 +6,18 @@ springboot-link-admin 提供一个权限认证后端接口解决方案，它基�
 
 本项目前端[https://github.com/252956/vue-link-admin]
 
+
  <p align="center">
-  <img width="900" src="https://raw.githubusercontent.com/252956/web-site/master/docs/img/1.png">
+  <img width="900" src="https://raw.githubusercontent.com/252956/vue-link-admin/master/src/assets/websit/1.png">
 </p>
  <p align="center">
-  <img width="900" src="https://raw.githubusercontent.com/252956/web-site/master/docs/img/2.png">
+  <img width="900" src="https://raw.githubusercontent.com/252956/vue-link-admin/master/src/assets/websit/2.png">
 </p>
  <p align="center">
-  <img width="900" src="https://raw.githubusercontent.com/252956/web-site/master/docs/img/3.png">
+  <img width="900" src="https://raw.githubusercontent.com/252956/vue-link-admin/master/src/assets/websit/3.png">
 </p>
  <p align="center">
-  <img width="900" src="https://raw.githubusercontent.com/252956/web-site/master/docs/img/4.png">
+  <img width="900" src="https://raw.githubusercontent.com/252956/vue-link-admin/master/src/assets/websit/4.png">
 </p>
 
 
