@@ -42,7 +42,7 @@ git clone https://github.com/252956/springboot-link-admin.git
 运行 App.java
 ```
 
-浏览器访问 http://localhost:8888/
+浏览器访问 http://localhost:8888/helloword.html
 
 
 
