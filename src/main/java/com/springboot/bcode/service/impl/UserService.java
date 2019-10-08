@@ -95,12 +95,12 @@ public class UserService implements IUserService {
 		// 获取当前用户的部门
 		Department dept = departmentService.query(user.getDeptid());
 		if (dept == null) {
-			throw new SystemException("未查询到当前用户的部门");
+			throw new AuthException("未查询到当前用户的部门");
 		}
 		user.setDeptName(dept.getName());
 		List<Role> roles = roleService.queryByUser(user.getUid());
 		if (roles == null || roles.isEmpty()) {
-			throw new SystemException("当前用户未分配角色");
+			throw new AuthException("当前用户未分配角色");
 		}
 		user.setRoles(roles);
 
@@ -108,7 +108,7 @@ public class UserService implements IUserService {
 				.getUid());
 
 		if (permissionList == null || permissionList.isEmpty()) {
-			throw new SystemException("当前用户为的角色未分配权限");
+			throw new AuthException("当前用户为的角色未分配权限");
 		}
 		// 用户菜单
 		List<Permission> menus = new ArrayList<Permission>();

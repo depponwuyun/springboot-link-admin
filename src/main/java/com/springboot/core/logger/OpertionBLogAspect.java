@@ -74,10 +74,10 @@ public class OpertionBLogAspect {
 		log.setUrl(request.getRequestURL().toString());
 		log.setIp(IPUtils.getIpAddr(request));
 
-		String requestmethod = request.getMethod();
-		String contentType = request.getContentType();
-		log.setRequestmethod(requestmethod);
-		log.setContentType(contentType);
+		//String requestmethod = request.getMethod();
+		//String contentType = request.getContentType();
+		//log.setRequestmethod(requestmethod);
+		//log.setContentType(contentType);
 
 		UserInfo user = GlobalUser.getUserInfo();
 		if (user != null) {

@@ -7,6 +7,7 @@ import com.springboot.bcode.domain.auth.UserInfo;
 import com.springboot.common.utils.HttpUtils;
 import com.springboot.common.utils.StringUtils;
 import com.springboot.core.redis.RedisUtils;
+import com.springboot.core.web.session.CookieContext;
 
 public class GlobalUser {
 
@@ -54,7 +55,11 @@ public class GlobalUser {
 	}
 
 	public static String getToken() {
-		return HttpUtils.getRequest().getHeader(AppContext.TOKEN);
+		String token = HttpUtils.getRequest().getHeader(AppContext.TOKEN);
+		if (StringUtils.isBlank(token)) {
+			token = CookieContext.get(AppContext.TOKEN);
+		}
+		return token;
 	}
 
 }

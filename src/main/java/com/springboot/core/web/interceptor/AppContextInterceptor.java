@@ -27,6 +27,7 @@ public class AppContextInterceptor implements HandlerInterceptor {
 	static List<String> permitUrl = new ArrayList<String>();
 	static {
 		permitUrl.add("/rest/user/login");
+		permitUrl.add("/public/rest/");
 	}
 
 	private boolean permitAll(String requestURL) {
